@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "ai-seo-description-generator"
+version = "0.1.0"
+description = ""
+authors = ["Mark Arkhipychev <hackyourrself@gmail.com>"]
+readme = "README.md"
+packages = [{include = "ai_seo_description_generator"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pandas = "^2.0.3"
+openai = "^0.27.8"
+requests = "^2.31.0"
+aiohttp = "^3.8.5"
+pydantic = "^2.1.1"
+pydantic-settings = "^2.0.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
