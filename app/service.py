@@ -20,4 +20,6 @@ class Excel:
 
 
 data_frame = Excel.read_excel('excel.xlsx')
-print(data_frame.to_dict())
+
+for i in range(len(data_frame)):
+    print(data_frame.loc[i].to_dict())
