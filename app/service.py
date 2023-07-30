@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 from pandas import DataFrame
 from pydantic import ValidationError
@@ -15,3 +17,7 @@ class Excel:
     @classmethod
     def write_excel(cls):
         ...
+
+
+data_frame = Excel.read_excel('excel.xlsx')
+print(data_frame.to_dict())
