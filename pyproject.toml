@@ -14,6 +14,7 @@ requests = "^2.31.0"
 aiohttp = "^3.8.5"
 pydantic = "^2.1.1"
 pydantic-settings = "^2.0.2"
+pyproject-toml = "^0.0.10"
 
 
 [build-system]
