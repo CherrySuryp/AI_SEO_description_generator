@@ -2,7 +2,7 @@ import json
 
 import pandas as pd
 from pandas import DataFrame
-from pydantic import ValidationError
+from pydantic import ValidationError 
 from app.scemas import SExcel
 from typing import Optional
 
@@ -12,7 +12,7 @@ class Excel:
     def read_excel(cls, file_path: str, sel_rows: Optional[list] = None) -> DataFrame:
         df = pd.read_excel(file_path).fillna('')
         if sel_rows:
-            return df[sel_rows].replace(r'\n', '', regex=True)
+            df = df[sel_rows]
         return df.replace(r'\n', '', regex=True)
 
     @classmethod
@@ -27,12 +27,7 @@ class Excel:
                 row = SExcel.model_validate(df.loc[i].to_dict()).model_dump()
                 if not row['result']:
                     content.append(row)
-                else:
-                    print('Excluded')
-                    pass
-
-            except ValidationError as e:
-                print(e.json())
+            except ValidationError:
                 pass
         return content
 

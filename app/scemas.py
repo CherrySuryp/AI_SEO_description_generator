@@ -1,8 +1,7 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 
 class SExcel(BaseModel):
-    model_config = ConfigDict(strict=False)
 
     item_name: str
     prompt: str
