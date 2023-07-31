@@ -16,6 +16,7 @@ pydantic = "^2.1.1"
 pydantic-settings = "^2.0.2"
 pyproject-toml = "^0.0.10"
 openpyxl = "^3.1.2"
+tqdm = "^4.65.0"
 
 
 [build-system]
