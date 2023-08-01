@@ -13,13 +13,13 @@ class Excel:
         self.file_path = file_path
 
     def read_excel(self, sel_rows: Optional[list] = None) -> DataFrame:
-        df = pd.read_excel(self.file_path).fillna('').replace(r'\n', '', regex=True)
+        df = pd.read_excel(self.file_path, sheet_name='todo').fillna('').replace(r'\n', '', regex=True)
         if sel_rows:
             df = df[sel_rows]
         return df
 
-    def write_excel(self):
-        ...
+    def write_excel(self, df: DataFrame) -> None:
+        df.to_excel(self.file_path, sheet_name='result')
 
     @staticmethod
     def excel_to_ai_prompt(df: DataFrame) -> list:
@@ -38,5 +38,13 @@ class Excel:
                     content.append(prompt)
             except ValidationError:
                 pass
-
         return content
+
+    @staticmethod
+    def ai_result_to_df(df: DataFrame, ai_result: list) -> DataFrame:
+        content = []
+        for i in range(len(df)):
+            row = SExcel.model_validate(df.loc[i].to_dict()).model_dump()
+            row['result'] = ai_result[i]
+            content.append(row)
+        return pd.json_normalize(content)
