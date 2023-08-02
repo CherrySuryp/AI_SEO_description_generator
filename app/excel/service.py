@@ -11,8 +11,8 @@ class Excel:
 
     def __init__(
             self,
-            file_path: str = 'excel.xlsx',
-            result_file_path: str = 'result.xlsx'
+            file_path: str = '../excels/excel.xlsx',
+            result_file_path: str = '../excels/result.xlsx'
     ):
         self.file_path = file_path
         self.result_file_path = result_file_path
