@@ -11,7 +11,7 @@ from pandas import json_normalize
 
 openai.api_key = settings.OPENAI_KEY
 
-df = Excel('excel.xlsx')
+df = Excel()
 df_excel = df.read_excel()
 
 chatgpt = ChatGPT()

@@ -9,8 +9,13 @@ from typing import Optional
 
 class Excel:
 
-    def __init__(self, file_path: str):
+    def __init__(
+            self,
+            file_path: str = 'excel.xlsx',
+            result_file_path: str = 'result.xlsx'
+    ):
         self.file_path = file_path
+        self.result_file_path = result_file_path
 
     def read_excel(self, sel_rows: Optional[list] = None) -> DataFrame:
         df = pd.read_excel(self.file_path, sheet_name='todo').fillna('').replace(r'\n', '', regex=True)
