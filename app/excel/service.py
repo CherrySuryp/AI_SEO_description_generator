@@ -24,7 +24,7 @@ class Excel:
         return df
 
     def write_excel(self, df: DataFrame) -> None:
-        df.to_excel(self.file_path, sheet_name='result')
+        df.to_excel(self.result_file_path, sheet_name='result')
 
     @staticmethod
     def excel_to_ai_prompt(df: DataFrame) -> list:

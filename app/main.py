@@ -1,13 +1,9 @@
-import json
-
 import asyncio
 import openai
 
 from app.config import settings
 from app.excel.service import Excel
 from app.ai.service import ChatGPT
-
-from pandas import json_normalize
 
 openai.api_key = settings.OPENAI_KEY
 
