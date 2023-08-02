@@ -1,19 +1,19 @@
 import asyncio
-import json
-
 import openai
 
 from app.config import settings
-
 from app.excel.service import Excel
 from app.ai.service import ChatGPT
 
 openai.api_key = settings.OPENAI_KEY
 
-prompts = Excel('excel.xlsx').read_excel()
-prompts = Excel.excel_to_ai_prompt(prompts)
+df = Excel()
+df_excel = df.read_excel()
 
-response = asyncio.run(ChatGPT(60).send_requests(prompts))
+chatgpt = ChatGPT()
 
-with open('ai.json', 'w', encoding='utf8') as f:
-    json.dump(response, f, ensure_ascii=False, indent=2)
+if __name__ == '__main__':
+    response = asyncio.run(chatgpt.send_requests(df.excel_to_ai_prompt(df_excel)))
+    df_excel = df.ai_result_to_df(df_excel, response)
+    df.write_excel(df_excel)
+

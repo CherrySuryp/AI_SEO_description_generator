@@ -1,14 +1,15 @@
 import asyncio
 import openai
 from tqdm import tqdm
+from app.config import settings
 
 
 class ChatGPT:
     """
-    :param rpm: "Requests per minute"
+    :param rpm: "Requests per minute. The default value is taken from the .env file"
     """
 
-    def __init__(self, rpm: int):
+    def __init__(self, rpm: int = settings.RPM_LIMIT):
         self.rpm = rpm
 
     @staticmethod
@@ -21,7 +22,7 @@ class ChatGPT:
         req = openai.ChatCompletion.create(
             model="gpt-3.5-turbo-16k",
             messages=[{"role": "user", "content": prompt}]
-        ).choices
+        ).choices[0].message.content
 
         return req
 
