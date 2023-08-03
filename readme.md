@@ -1,20 +1,6 @@
-# AI Генератор SEO описаний для Wildberries и Ozon
+<h2> AI Генератор SEO описаний для Wildberries и Ozon</h2>
 
-
-## Installation
-В проекте используется пакетный менеджер poetry.
-
-```bash
+<div>В проекте используется пакетный менеджер Poetry</div>
+<code>
 pip install poetry
-```
-Установите зависимости
-```bash
-poetry add pyproject.toml
-```
-
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
+</code>
