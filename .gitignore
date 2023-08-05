@@ -1,4 +1,4 @@
 venv
 .idea
 .env
-/gsheets_creds.json
+/app/gsheets/creds.json
