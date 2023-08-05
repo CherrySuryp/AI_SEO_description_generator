@@ -1,7 +1,9 @@
-import asyncio
-
 import openai
+import os
+print(os.getcwd())
 from app.config import settings
+
+openai.api_key = settings.OPENAI_KEY
 
 
 class ChatGPT:
@@ -17,7 +19,6 @@ class ChatGPT:
             rpm: int = settings.RPM_LIMIT,
             model: str = settings.GPT_MODEL
     ):
-        openai.api_key = settings.OPENAI_KEY
         self.rpm = rpm
         self.model = model
 
