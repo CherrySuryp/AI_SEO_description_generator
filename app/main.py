@@ -8,11 +8,4 @@ from app.ai.service import ChatGPT
 openai.api_key = settings.OPENAI_KEY
 
 df = Excel()
-df_excel = df.read_excel()
-
 chatgpt = ChatGPT()
-
-if __name__ == '__main__':
-    response = asyncio.run(chatgpt.send_requests(df.excel_to_ai_prompt(df_excel)))
-    df_excel = df.ai_result_to_df(df_excel, response)
-    df.write_excel(df_excel)

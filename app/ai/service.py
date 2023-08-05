@@ -6,7 +6,7 @@ from app.config import settings
 
 class ChatGPT:
     """
-    :param rpm: "Requests per minute. The default value is taken from the .env file"
+    :param rpm: Requests per minute. The default value is taken from the .env file
     """
 
     def __init__(self, rpm: int = settings.RPM_LIMIT):
