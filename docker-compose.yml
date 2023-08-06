@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+  celery:
+    container_name: celery
+    build:
+      context: .
+    working_dir: /app
+    command: ["celery", "-A", "celery_app", "worker", "--pool=prefork", "--loglevel=INFO"]
+    depends_on:
+      - redis
+
+  flower:
+    container_name: flower
+    build:
+      context: .
+    working_dir: /app
+    command: ["celery", "-A", "celery_app", "flower"]
+    depends_on:
+      - redis
+      - celery
+    ports:
+      - "5555:5555"
+  main_app:
+    build: .
+    container_name: main_app
+    depends_on:
+      - celery
