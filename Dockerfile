@@ -1,6 +1,7 @@
-FROM python:3.11.4
+FROM python:3.11
 
-ADD . /
+COPY requirements.txt .
 RUN pip install -r requirements.txt
+COPY . .
 
 CMD ["python", "-u", "./app/run.py"]
