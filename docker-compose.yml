@@ -1,31 +1,10 @@
-version: "3.11"
+version: "3.8"
 services:
+  redis:
+    container_name: celery_redis
+    image: redis
+
   main_app:
     build: .
-    env_file:
-      - .env
-    command: sh "cd app/ && python -u ./run.py"
-
-  redis:
-    image: redis:7
-    container_name: redis
-    ports:
-      - "6379:6379"
-  celery:
-    build: .
-    container_name: celery
-    env_file:
-      - .env
-    depends_on:
-      - redis
-    command: sh "cd app/ && celery -A celery_app worker --pool=prefork ==loglevel=INFO"
-
-  flower:
-    build: .
-    container_name: flower
-    depends_on:
-      - redis
-      - celery
-    command: sh "cd app/ && celery -A celery_app flower"
-    ports:
-      - "5555:5555"
+    container_name: main_app
+    command: sh "python -u ./app/run.py"
