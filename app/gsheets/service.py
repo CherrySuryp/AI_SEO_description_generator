@@ -36,7 +36,7 @@ class GSheet:
 
         return values['values']
 
-    def update_cell(self, cell_id: str, content: str):
+    def update_cell(self, cell_id: str, content: str) -> None:
         self.service.update(
             spreadsheetId=self.SPREADSHEET_ID,
             range=f'{self.sheet_name}!{cell_id}',

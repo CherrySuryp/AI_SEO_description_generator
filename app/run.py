@@ -5,7 +5,7 @@ from gsheets.service import gsheet
 from tasks import worker
 
 
-async def main():
+async def main() -> None:
     while True:
         sheet_data = gsheet.read_sheet()
         for i in range(len(sheet_data)):

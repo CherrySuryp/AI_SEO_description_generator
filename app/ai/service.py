@@ -23,7 +23,7 @@ class ChatGPT:
         self.rpm = rpm
         self.model = model
 
-    def send_request(self, prompt: str):
+    def send_request(self, prompt: str) -> str:
         req = openai.ChatCompletion.create(
             model=self.model,
             messages=[{"role": "user", "content": prompt}]
