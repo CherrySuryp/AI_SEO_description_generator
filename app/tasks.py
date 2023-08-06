@@ -1,6 +1,6 @@
-from app.ai.service import chatgpt
-from app.celery_app import celery
-from app.gsheets.service import gsheet
+from ai.service import chatgpt
+from celery_app import celery
+from gsheets.service import gsheet
 
 
 @celery.task

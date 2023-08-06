@@ -1,4 +1,3 @@
-from typing import Literal
 import httplib2
 from apiclient import discovery
 from oauth2client.service_account import ServiceAccountCredentials

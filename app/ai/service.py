@@ -1,7 +1,8 @@
-import openai
-import os
-print(os.getcwd())
-from app.config import settings
+import sys
+sys.path.append('..')
+
+import openai # noqa
+from app.config import settings # noqa
 
 openai.api_key = settings.OPENAI_KEY
 

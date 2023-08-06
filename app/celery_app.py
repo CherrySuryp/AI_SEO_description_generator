@@ -1,7 +1,9 @@
 from celery import Celery
+import sys
+sys.path.append('..')
 
 celery = Celery(
-    'tasks',
+    'app',
     broker='redis://localhost:6379',
-    include=['app.tasks']
+    include=['tasks']
 )

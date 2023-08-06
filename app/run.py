@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import asyncio
 
 from gsheets.service import gsheet
@@ -10,9 +11,9 @@ async def main():
         for i in range(len(sheet_data)):
             row_id = i + 2
             if sheet_data[i][0] == 'Взять в работу':
+                print(f'Sent task from row {row_id} to queue')
                 gsheet.update_cell(f'A{row_id}', 'В работе')
-                worker(data=sheet_data[i], row_id=row_id).apply_async()
-        print('Waiting....')
-        await asyncio.sleep(10)
+                worker.delay(data=sheet_data[i], row_id=row_id)
+        await asyncio.sleep(30)
 
 asyncio.run(main())
