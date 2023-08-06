@@ -4,6 +4,6 @@ sys.path.append('..')
 
 celery = Celery(
     'app',
-    broker='redis://localhost:6379',
+    broker='redis://redis:6379/0',
     include=['tasks']
 )
