@@ -1,45 +1,34 @@
-import asyncio
-import openai
-from tqdm import tqdm
-from app.config import settings
+import sys
+sys.path.append('..')
+
+import openai # noqa
+from app.config import settings # noqa
+
+openai.api_key = settings.OPENAI_KEY
 
 
 class ChatGPT:
     """
-    :param rpm: "Requests per minute. The default value is taken from the .env file"
+    :param rpm: Requests per minute. The default value is taken from the .env file.
+     Check your available RPM at https://platform.openai.com/docs/guides/rate-limits/overview
+    :param model: GPT Model (e.g. gpt-3.5-turbo). The default value is taken from the .env file.
+     You can check available models at https://platform.openai.com/docs/models/overview
     """
 
-    def __init__(self, rpm: int = settings.RPM_LIMIT):
+    def __init__(
+            self,
+            rpm: int = settings.RPM_LIMIT,
+            model: str = settings.GPT_MODEL
+    ):
         self.rpm = rpm
+        self.model = model
 
-    @staticmethod
-    def slice_list_to_chunks(to_slice: list, chunk_size: int) -> list:
-        for piece in range(0, len(to_slice), chunk_size):
-            yield to_slice[piece:piece + chunk_size]
-
-    @staticmethod
-    async def make_request(prompt: str) -> list:
+    def send_request(self, prompt: str) -> str:
         req = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-16k",
+            model=self.model,
             messages=[{"role": "user", "content": prompt}]
         ).choices[0].message.content
-
         return req
 
-    async def send_requests(self, prompts: list) -> list:
-        result = []
-        request_interval = 60 / self.rpm
-        chunks = self.slice_list_to_chunks(prompts, 10)
 
-        for chunk in chunks:
-            tasks = []
-            for i in tqdm(chunk, desc='Asking ChatGPT to generate response', colour='GREEN'):
-                task = asyncio.ensure_future(
-                    self.make_request(i)
-                )
-                tasks.append(task)
-                await asyncio.sleep(request_interval)
-
-            result.extend(await asyncio.gather(*tasks))
-
-        return result
+chatgpt = ChatGPT()
