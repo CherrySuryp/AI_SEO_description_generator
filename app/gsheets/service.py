@@ -1,9 +1,16 @@
+import json
+
 import httplib2
 from apiclient import discovery
 from oauth2client.service_account import ServiceAccountCredentials
 
-CREDENTIALS_FILE = '/home/markarkhipychev/PycharmProjects/AI_SEO_description_generator/app/gsheets/creds.json'
-credentials = ServiceAccountCredentials.from_json_keyfile_name(
+import sys
+sys.path.append('..')
+
+from app.config import settings # noqa
+
+CREDENTIALS_FILE = json.loads(settings.GOOGLE_CREDS)
+credentials = ServiceAccountCredentials.from_json_keyfile_dict(
     CREDENTIALS_FILE,
     ['https://www.googleapis.com/auth/spreadsheets']
 )

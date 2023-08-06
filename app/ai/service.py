@@ -24,12 +24,10 @@ class ChatGPT:
         self.model = model
 
     def send_request(self, prompt: str):
-        print("Взято в работу")
         req = openai.ChatCompletion.create(
             model=self.model,
             messages=[{"role": "user", "content": prompt}]
         ).choices[0].message.content
-        print('Завершено')
         return req
 
 

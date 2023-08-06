@@ -16,4 +16,6 @@ async def main():
                 worker.delay(data=sheet_data[i], row_id=row_id)
         await asyncio.sleep(30)
 
-asyncio.run(main())
+if __name__ == '__main__':
+    print('Started')
+    asyncio.run(main())

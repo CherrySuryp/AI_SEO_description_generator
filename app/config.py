@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     OPENAI_KEY: str
     RPM_LIMIT: int
     GPT_MODEL: str
+    GOOGLE_CREDS: str
 
 
 settings = Settings()
