@@ -17,8 +17,14 @@ credentials = ServiceAccountCredentials.from_json_keyfile_dict(
 
 
 class GSheet:
-
-    def __init__(self, sheet_name: str, sheet_range: str, gsheet_id: str, sheet_result_col: str):
+    """
+    Layer that works with Google Sheets
+    :param gsheet_id - Copy it from Google sheet link
+    :param sheet_name - Enter Google sheet name
+    :param sheet_range - e.g. "A1:E100"
+    :param sheet_result_col - Enter a column name that will be used to store results
+    """
+    def __init__(self,  gsheet_id: str, sheet_name: str, sheet_range: str, sheet_result_col: str):
         self.httpAuth = credentials.authorize(httplib2.Http())
         self.service = discovery.build('sheets', 'v4', http=self.httpAuth).spreadsheets().values()
 
