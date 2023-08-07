@@ -10,7 +10,7 @@ services:
     build:
       context: .
     working_dir: /app
-    command: ["celery", "-A", "celery_app", "worker", "--pool=prefork", "--loglevel=INFO"]
+    command: ["celery", "-A", "celery_app", "worker", "--pool=prefork","--concurrency=4", "--loglevel=INFO"]
     depends_on:
       - redis
 
@@ -30,3 +30,4 @@ services:
     container_name: main_app
     depends_on:
       - celery
+      - redis
