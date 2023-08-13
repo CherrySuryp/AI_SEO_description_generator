@@ -1,21 +1,13 @@
 #!/usr/bin/env python
 import asyncio
-
-from gsheets.service import gsheet
-from tasks import worker
+from business_logic import BusinessLogic
 
 
-async def main() -> None:
-    while True:
-        sheet_data = gsheet.read_sheet()
-        for i in range(len(sheet_data)):
-            row_id = i + 2
-            if sheet_data[i][0] == 'Взять в работу':
-                print(f'Sent task from row {row_id} to queue')
-                gsheet.update_cell(f'A{row_id}', 'В работе')
-                worker.delay(data=sheet_data[i], row_id=row_id)
-        await asyncio.sleep(30)
+def main() -> None:
+    print('Started')
+    business_logic = BusinessLogic()
+    asyncio.run(business_logic.fetcher_worker())
+
 
 if __name__ == '__main__':
-    print('Started')
-    asyncio.run(main())
+    main()
