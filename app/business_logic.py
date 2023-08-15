@@ -23,4 +23,4 @@ class BusinessLogic:
                     gsheet.update_cell(f'A{row_id}', 'В работе')
                     worker.delay(data=sheet_data[i], row_id=row_id)
 
-            await asyncio.sleep(self.sleep_interval)
+                await asyncio.sleep(self.sleep_interval)
