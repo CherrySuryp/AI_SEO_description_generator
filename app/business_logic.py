@@ -1,5 +1,4 @@
 import asyncio
-
 from gsheets.service import gsheet
 from config import settings
 from tasks import worker
