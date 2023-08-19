@@ -29,6 +29,3 @@ class ChatGPT:
             .message.content
         )
         return req
-
-
-chatgpt = ChatGPT()

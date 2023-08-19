@@ -17,9 +17,8 @@ class TaskService:
     async def fetcher_worker(self):
         print(f"{datetime.now().replace(microsecond=0)} Program has started")
         while True:
-            sheet_data = self.gsheet.read_sheet()
-
-            if sheet_data:
+            try:
+                sheet_data = self.gsheet.read_sheet()
                 for i in range(len(sheet_data)):
                     if sheet_data[i][0] == "Взять в работу" and sheet_data[i][1:5]:
                         row_id = i + 2
@@ -31,6 +30,8 @@ class TaskService:
                             f"{datetime.now().replace(microsecond=0)} Sent task from row {row_id} to queue"
                         )
 
-                        await asyncio.sleep(self.sleep_interval)
-            else:
                 await asyncio.sleep(self.sleep_interval)
+
+            except HttpError:
+                await asyncio.sleep(self.sleep_interval / 2)
+                pass

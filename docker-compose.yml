@@ -19,7 +19,7 @@ services:
     build:
       context: .
     working_dir: /app
-    command: ["celery", "-A", "celery_app", "flower"]
+    command: ["celery", "-A", "tasks:celery", "flower"]
     depends_on:
       - redis
       - celery

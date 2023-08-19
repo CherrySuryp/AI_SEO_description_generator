@@ -30,7 +30,6 @@ class GSheet:
         self,
         sheet_name: str = "Запросы",
         sheet_range: str = "A2:E1000",
-        sheet_result_col: str = "E",
         spreadsheet_id: str = settings.GSHEET_ID,
     ):
         http_auth = credentials.authorize(httplib2.Http())
@@ -41,19 +40,14 @@ class GSheet:
         self.SPREADSHEET_ID = spreadsheet_id
         self.sheet_name = sheet_name
         self.sheet_range = sheet_range
-        self.sheet_result_col = sheet_result_col
 
     def read_sheet(self) -> list:
-        try:
-            values = self.service.get(
-                spreadsheetId=self.SPREADSHEET_ID,
-                range=f"{self.sheet_name}!{self.sheet_range}",
-                majorDimension="ROWS",
-            ).execute()
-            return values["values"]
-
-        except HttpError:
-            pass
+        values = self.service.get(
+            spreadsheetId=self.SPREADSHEET_ID,
+            range=f"{self.sheet_name}!{self.sheet_range}",
+            majorDimension="ROWS",
+        ).execute()
+        return values["values"]
 
     def update_cell(self, cell_id: str, content: str) -> None:
         self.service.update(
@@ -62,6 +56,3 @@ class GSheet:
             valueInputOption="USER_ENTERED",
             body={"majorDimension": "ROWS", "values": [[content]]},
         ).execute()
-
-
-gsheet = GSheet()
