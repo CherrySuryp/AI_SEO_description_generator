@@ -53,7 +53,6 @@ class GSheet:
             return values["values"]
 
         except HttpError:
-            print("Google Error. Skipped.......")
             pass
 
     def update_cell(self, cell_id: str, content: str) -> None:

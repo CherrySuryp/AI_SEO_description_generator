@@ -22,7 +22,6 @@ def sentry_logs():
 
 
 def main() -> None:
-    print("Program has started")
     asyncio.run(TaskService().fetcher_worker())
 
 
