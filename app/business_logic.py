@@ -12,7 +12,7 @@ class TaskService:
     def __init__(self):
         self.sleep_interval = settings.REFRESH_INTERVAL
         self.gsheet = GSheet()
-        self.worker = Worker()
+        self.send_task = Worker()
 
     async def fetcher_worker(self):
         print(f"{datetime.now().replace(microsecond=0)} Program has started")
@@ -21,12 +21,12 @@ class TaskService:
 
             if sheet_data:
                 for i in range(len(sheet_data)):
-                    row_id = i + 2
                     if sheet_data[i][0] == "Взять в работу" and sheet_data[i][1:5]:
-                        self.worker.write_response_to_gsheet.delay(
-                            data=sheet_data[i], row_id=row_id
-                        )
+                        row_id = i + 2
+
+                        self.send_task.worker.delay(data=sheet_data[i], row_id=row_id)
                         self.gsheet.update_cell(f"A{row_id}", "В работе")
+
                         print(f"{datetime.now().replace(microsecond=0)} Sent task from row {row_id} to queue")
 
                         await asyncio.sleep(self.sleep_interval)
