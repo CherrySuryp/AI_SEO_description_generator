@@ -3,6 +3,7 @@ import json
 import httplib2
 from apiclient import discovery
 from oauth2client.service_account import ServiceAccountCredentials
+from googleapiclient.errors import HttpError
 
 import sys
 
@@ -43,13 +44,17 @@ class GSheet:
         self.sheet_result_col = sheet_result_col
 
     def read_sheet(self) -> list:
-        values = self.service.get(
-            spreadsheetId=self.SPREADSHEET_ID,
-            range=f"{self.sheet_name}!{self.sheet_range}",
-            majorDimension="ROWS",
-        ).execute()
+        try:
+            values = self.service.get(
+                spreadsheetId=self.SPREADSHEET_ID,
+                range=f"{self.sheet_name}!{self.sheet_range}",
+                majorDimension="ROWS",
+            ).execute()
+            return values["values"]
 
-        return values["values"]
+        except HttpError:
+            print("Google Error. Skipped.......")
+            pass
 
     def update_cell(self, cell_id: str, content: str) -> None:
         self.service.update(
