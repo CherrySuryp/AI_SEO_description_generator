@@ -1,8 +1,9 @@
 import sys
-sys.path.append('..')
 
-import openai # noqa
-from app.config import settings # noqa
+sys.path.append("..")
+
+import openai  # noqa
+from app.config import settings  # noqa
 
 openai.api_key = settings.OPENAI_KEY
 
@@ -15,19 +16,18 @@ class ChatGPT:
      You can check available models at https://platform.openai.com/docs/models/overview
     """
 
-    def __init__(
-            self,
-            rpm: int = settings.RPM_LIMIT,
-            model: str = settings.GPT_MODEL
-    ):
+    def __init__(self, rpm: int = settings.RPM_LIMIT, model: str = settings.GPT_MODEL):
         self.rpm = rpm
         self.model = model
 
     def send_request(self, prompt: str) -> str:
-        req = openai.ChatCompletion.create(
-            model=self.model,
-            messages=[{"role": "user", "content": prompt}]
-        ).choices[0].message.content
+        req = (
+            openai.ChatCompletion.create(
+                model=self.model, messages=[{"role": "user", "content": prompt}]
+            )
+            .choices[0]
+            .message.content
+        )
         return req
 
 
