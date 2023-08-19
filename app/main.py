@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 import asyncio
-import logging
+
+from config import settings
 from business_logic import TaskService
 
+import logging
 import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration
 
 sentry_logging = LoggingIntegration(level=logging.INFO, event_level=logging.ERROR)
 
 sentry_sdk.init(
-    dsn="https://7d76275f622495a2e5f5eff763dde248@o4505459592200192.ingest.sentry.io/4505710500249600",
+    dsn=settings.SENTRY_DSN,
     traces_sample_rate=1.0,
     integrations=[sentry_logging],
 )

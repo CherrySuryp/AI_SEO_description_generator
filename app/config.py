@@ -15,14 +15,17 @@ class ProdSettings(BaseSettings):
     OPENAI_KEY: str
     RPM_LIMIT: int
     GPT_MODEL: str
-    SLEEP_INTERVAL: int
+    SENTRY_DSN: str
+    REFRESH_INTERVAL: int
     GSHEET_ID: str
     GOOGLE_CREDS: str
 
 
 settings = ProdSettings()
 
+
 if settings.MODE == "PROD":
     redis_path = "redis://redis:6379/0"
+
 else:
     redis_path = "redis://127.0.0.1:6379/0"
