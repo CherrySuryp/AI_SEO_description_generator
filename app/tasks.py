@@ -12,7 +12,7 @@ class Worker:
 
     @staticmethod
     @celery.task(rate_limit=f"{settings.RPM_LIMIT}/m")
-    def write_response_to_gsheet(data: list, row_id: int) -> None:
+    def worker(data: list, row_id: int) -> None:
         result = Worker.chatgpt.send_request(TextUtils.row_to_ai_prompt(data))
         used_keywords = TextUtils.count_keywords(result, data)
 
