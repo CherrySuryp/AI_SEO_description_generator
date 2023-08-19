@@ -3,7 +3,7 @@ import json
 import httplib2
 from apiclient import discovery
 from oauth2client.service_account import ServiceAccountCredentials
-from googleapiclient.errors import HttpError
+from googleapiclient.errors import HttpError  # noqa
 
 import sys
 

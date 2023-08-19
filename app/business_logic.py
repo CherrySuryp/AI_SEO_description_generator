@@ -27,7 +27,9 @@ class TaskService:
                         self.send_task.worker.delay(data=sheet_data[i], row_id=row_id)
                         self.gsheet.update_cell(f"A{row_id}", "В работе")
 
-                        print(f"{datetime.now().replace(microsecond=0)} Sent task from row {row_id} to queue")
+                        print(
+                            f"{datetime.now().replace(microsecond=0)} Sent task from row {row_id} to queue"
+                        )
 
                         await asyncio.sleep(self.sleep_interval)
             else:

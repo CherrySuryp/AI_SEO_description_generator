@@ -3,7 +3,7 @@ class TextUtils:
     def row_to_ai_prompt(data: list) -> str:
         item_name, base_prompt, specifications, keywords = data[1:5]
         prompt = (
-            f"Задача: {base_prompt}\n"
+            f"{base_prompt}\n"
             f"Товар: {item_name}\n"
             f"Характеристики: {specifications}\n"
             f"Ключевые слова: {keywords}"
