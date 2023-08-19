@@ -1,14 +1,21 @@
-from ai.service import chatgpt
+from ai.service import ChatGPT
 from celery_app import celery
-from gsheets.service import gsheet
+from gsheets.service import GSheet
 
+from utils import TextUtils
 from config import settings
 
 
-@celery.task(rate_limit=f'{settings.RPM_LIMIT}/m')
-def worker(data: list, row_id: int) -> None:
-    prompt = gsheet.row_to_ai_prompt(data)
-    req = chatgpt.send_request(prompt)
+class Worker:
+    gsheet = GSheet()
+    chatgpt = ChatGPT()
 
-    gsheet.update_cell(f"A{row_id}", 'Завершено')
-    gsheet.update_cell(f"E{row_id}", req)
+    @staticmethod
+    @celery.task(rate_limit=f"{settings.RPM_LIMIT}/m")
+    def write_response_to_gsheet(data: list, row_id: int) -> None:
+        result = Worker.chatgpt.send_request(TextUtils.row_to_ai_prompt(data))
+        used_keywords = TextUtils.count_keywords(result, data)
+
+        Worker.gsheet.update_cell(f"A{row_id}", "Завершено")
+        Worker.gsheet.update_cell(f"F{row_id}", result)
+        Worker.gsheet.update_cell(f"G{row_id}", used_keywords)
