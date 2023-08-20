@@ -1,5 +1,5 @@
 import json
-
+from typing import List, Literal
 import httplib2
 from apiclient import discovery
 from oauth2client.service_account import ServiceAccountCredentials
@@ -9,50 +9,72 @@ import sys
 
 sys.path.append("..")
 
-from app.config import settings  # noqa
-
-CREDENTIALS_FILE = json.loads(settings.GOOGLE_CREDS)
-credentials = ServiceAccountCredentials.from_json_keyfile_dict(
-    CREDENTIALS_FILE, ["https://www.googleapis.com/auth/spreadsheets"]
-)
+from app.config import ProdSettings  # noqa
 
 
 class GSheet:
     """
     Layer that works with Google Sheets
-    :param spreadsheet_id - Copy it from Google sheet link
-    :param sheet_name - Enter Google sheet name
-    :param sheet_range - e.g. "A1:E100"
-    :param sheet_result_col - Enter a column name that will be used to store results
+    :param sheet_name - Enter Google sheet name. Default = "Запросы"
+    :param sheet_range - Default = "A2:E1000"
     """
 
     def __init__(
         self,
         sheet_name: str = "Запросы",
         sheet_range: str = "A2:E1000",
-        spreadsheet_id: str = settings.GSHEET_ID,
     ):
-        http_auth = credentials.authorize(httplib2.Http())
-        self.service = (
-            discovery.build("sheets", "v4", http=http_auth).spreadsheets().values()
+        self.settings = ProdSettings()  # Настройки
+
+        self.gsheet_id = self.settings.GSHEET_ID  # ID таблицы
+        self.sheet_name = sheet_name  # Название рабочего листа
+        self.sheet_range = sheet_range  # Область, с которой работает программа
+
+        credentials = ServiceAccountCredentials.from_json_keyfile_dict(
+            json.loads(self.settings.GOOGLE_CREDS),
+            ["https://www.googleapis.com/auth/spreadsheets"],
         )
 
-        self.SPREADSHEET_ID = spreadsheet_id
-        self.sheet_name = sheet_name
-        self.sheet_range = sheet_range
+        # Инстанс, который работает с таблицей
+        self.service = (
+            discovery.build("sheets", "v4", http=credentials.authorize(httplib2.Http()))
+            .spreadsheets()
+            .values()
+        )
 
-    def read_sheet(self) -> list:
+    def read_sheet(self) -> List[str]:
+        """
+        Чтение таблицы
+        :return:
+        """
         values = self.service.get(
-            spreadsheetId=self.SPREADSHEET_ID,
+            spreadsheetId=self.gsheet_id,
             range=f"{self.sheet_name}!{self.sheet_range}",
             majorDimension="ROWS",
         ).execute()
         return values["values"]
 
     def update_cell(self, cell_id: str, content: str) -> None:
+        """
+        Обновление информации в таблице
+        :param cell_id: ID клетки
+        :param content: Информация, которую нужно вставить
+        :return:
+        """
         self.service.update(
-            spreadsheetId=self.SPREADSHEET_ID,
+            spreadsheetId=self.gsheet_id,
             range=f"{self.sheet_name}!{cell_id}",
             valueInputOption="USER_ENTERED",
             body={"majorDimension": "ROWS", "values": [[content]]},
         ).execute()
+
+    def update_status(
+        self, row_id, new_status: str = Literal["В работе", "Завершено"]
+    ) -> None:
+        """
+        Обновление статуса в таблице
+        :param new_status: Новый статус
+        :param row_id: Номер строки
+        :return:
+        """
+        self.update_cell(f"A{row_id}", new_status)

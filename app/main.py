@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import asyncio
 
-from config import settings
+from config import ProdSettings
 from business_logic import TaskService
 
 import logging
@@ -9,7 +9,9 @@ import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration
 
 
-def sentry_logs():
+def sentry_logs() -> None:
+    settings = ProdSettings()
+
     if settings.MODE == "PROD":
         sentry_logging = LoggingIntegration(
             level=logging.INFO, event_level=logging.ERROR
@@ -26,5 +28,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    sentry_logs()
-    main()
+    sentry_logs()  # Запускаем логирование с Sentry
+    main()  # Запускаем контроллер
