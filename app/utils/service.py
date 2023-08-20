@@ -1,18 +1,34 @@
 class TextUtils:
+    """
+    Утилиты для работы с текстом
+    """
+
     @staticmethod
     def row_to_ai_prompt(data: list) -> str:
+        """
+        Превращает несколько ячеек с данными в единый промпт для ChatGPT
+        :param data:
+        :return:
+        """
         item_name, base_prompt, specifications, keywords = data[1:5]
-        prompt = (
+
+        return (
             f"{base_prompt}\n"
             f"Товар: {item_name}\n"
             f"Характеристики: {specifications}\n"
             f"Ключевые слова: {keywords}"
         )
 
-        return prompt
-
     @staticmethod
     def count_keywords(text: str, data: list) -> str:
+        """
+        **Функция в разработке.**
+
+        Проверяет вхождение ключевых слов в тексте
+        :param text:
+        :param data:
+        :return: Возвращает ключевые слова, использованные в тексте
+        """
         used_keywords = []
         keywords = data[3].split(",")
         for i in keywords:

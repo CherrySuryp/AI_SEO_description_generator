@@ -24,7 +24,7 @@ class ProdSettings(BaseSettings):
 settings = ProdSettings()
 
 
-if settings.MODE == "PROD":
+if ProdSettings().MODE == "PROD":
     redis_path = "redis://redis:6379/0"
 
 else:
