@@ -77,7 +77,8 @@ celery -A tasks:celery worker --pool=prefork --concurrency=4 --loglevel=INFO
 ```
 
 ### Запуск в Docker-Compose
-При запуске программы в docker, в файле **".env"** необходимо установить MODE в значение PROD
+Для запуска программы в контейнере нужно будет установить [Docker-Desktop](https://www.docker.com/products/docker-desktop/).  
+В файле **".env"** необходимо установить MODE в значение PROD.  
 
 ```bash
 docker compose build
