@@ -12,7 +12,7 @@ from sentry_sdk.integrations.logging import LoggingIntegration
 def sentry_logs() -> None:
     settings = ProdSettings()
 
-    if settings.MODE == "PROD":
+    if settings.MODE == "PROD" and settings.USE_SENTRY == "TRUE":
         sentry_logging = LoggingIntegration(
             level=logging.INFO, event_level=logging.ERROR
         )

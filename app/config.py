@@ -12,10 +12,14 @@ class ProdSettings(BaseSettings):
     )
 
     MODE: Literal["DEV", "PROD"]
+
     OPENAI_KEY: str
     RPM_LIMIT: int
     GPT_MODEL: str
+
+    USE_SENTRY: Literal["TRUE", "FALSE"]
     SENTRY_DSN: str
+
     REFRESH_INTERVAL: int
     GSHEET_ID: str
     GOOGLE_CREDS: str
