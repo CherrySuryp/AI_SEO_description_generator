@@ -97,3 +97,4 @@ docker compose up --build
 2. Занести задачи в Google таблицу
 3. Сменить статус на "взять в работу"
 ![Задача](https://github.com/CherrySuryp/AI_SEO_description_generator/blob/master/images/screencast.gif)
+4. Примерно через 30 секунд результат работы будет записан в таблицу :)
