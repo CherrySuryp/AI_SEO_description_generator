@@ -94,4 +94,4 @@ docker compose up --build
 # Использование
 Для того чтобы начать работу, необходимо запустить программу и занести задачи в Google таблицу  
 Пример:  
-![Задача](https://github.com/CherrySuryp/AI_SEO_description_generator/images/sheet.png)
+![Задача](https://github.com/CherrySuryp/AI_SEO_description_generator/blob/master/images/sheet.png)
