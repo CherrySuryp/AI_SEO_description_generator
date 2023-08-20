@@ -7,16 +7,21 @@
 ## Установка и настройка
 
 ### 1. Google таблица
-Отсюда необходимо скопировать таблицу:  
-[Ссылка на таблицу](https://docs.google.com/spreadsheets/d/19foQkqEQusXWiEW6utm5vwCnWSGi2Ztj6M-FUJRWFL8/edit#gid=0)
+Для работы необходимо создать сервисный аккаунт Google.  
+О том как его создать можно посмотреть [в этом видео](https://youtu.be/caiR7WAGMVM?t=100)
+
+1. Скопируйте таблицу - [cсылка](https://docs.google.com/spreadsheets/d/19foQkqEQusXWiEW6utm5vwCnWSGi2Ztj6M-FUJRWFL8/edit#gid=0)
+2. Выдайте права доступа сервисному аккаунту Google
+
 
 ### 2. Установка зависимостей
-```pip
+```bash
 pip install -r requirements.txt
 ```
 
 ### 3. Конфигурационный файл .env
-В корне проекта лежит конфигурационный файл **.env.example**
+В корне проекта находится конфигурационный файл **.env.example**
+
 ```.env
 MODE=DEV # Режим работы DEV/PROD
 
@@ -55,7 +60,7 @@ cd app
 celery -A tasks:celery worker --pool=prefork --concurrency=4 --loglevel=INFO
 ```
 
-### Запуск в docker compose
+### Запуск в Docker-Compose
 При запуске программы в docker, в файле .env необходимо установить MODE в значение PROD
 
 ```bash
@@ -64,7 +69,7 @@ docker compose up
 ```
 
 ВАЖНО!  
-При изменении конфигурации необходимо пересобирать контейнер
+При изменении конфигурации программы необходимо пересобрать контейнер
 ```bash
 docker compose up --build
 ```
