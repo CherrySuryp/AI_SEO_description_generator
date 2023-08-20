@@ -13,13 +13,27 @@
 1. Скопируйте таблицу - [cсылка](https://docs.google.com/spreadsheets/d/19foQkqEQusXWiEW6utm5vwCnWSGi2Ztj6M-FUJRWFL8/edit#gid=0)
 2. Выдайте права доступа сервисному аккаунту Google
 
+---
 
-### 2. Установка зависимостей
+### 2. Установка виртуального окружения
+```bash
+python -m venv venv
+```
+**Активация venv для Windows:**
+```bash
+\venv\Scripts\activate.bat
+```
+**Активация для Linux**
+```bash
+source venv/bin/activate
+```
+---
+### 3. Установка зависимостей
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Конфигурационный файл .env
+### 4. Конфигурационный файл .env
 В корне проекта находится конфигурационный файл **.env.example**
 
 ```.env
@@ -36,6 +50,7 @@ GSHEET_ID= # ID Google таблицы
 GOOGLE_CREDS= # Информация о сервисном аккаунте Google
 ```
 
+---
 ## Запуск
 Проект состоит из двух частей:  
 1. Опрос Google таблицы на наличие новых задач
