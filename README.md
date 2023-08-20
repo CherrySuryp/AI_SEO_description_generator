@@ -96,4 +96,4 @@ docker compose up --build
 1. Запустить программу
 2. Занести задачи в Google таблицу
 3. Сменить статус на "взять в работу"
-![Задача](https://github.com/CherrySuryp/AI_SEO_description_generator/blob/master/images/sheet.png)
+![Задача](https://github.com/CherrySuryp/AI_SEO_description_generator/blob/master/images/screencast.gif)
