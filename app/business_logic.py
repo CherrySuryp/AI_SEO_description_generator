@@ -1,4 +1,5 @@
 import asyncio
+from typing import NoReturn
 
 from ssl import SSLEOFError
 
@@ -18,7 +19,7 @@ class TaskService:
         self.gsheet = GSheet()
         self.send_task = Worker()
 
-    async def fetcher_worker(self) -> None:
+    async def fetcher_worker(self) -> NoReturn:
         """
         Опрос таблицы каждые N секунд и отправка новых задач в очередь
         :return:
