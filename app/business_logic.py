@@ -1,5 +1,9 @@
 import asyncio
 
+from ssl import SSLEOFError
+
+import sentry_sdk
+
 from gsheets.service import GSheet
 from config import ProdSettings
 from tasks import Worker
@@ -42,10 +46,9 @@ class TaskService:
                         print(
                             f"{datetime.now().replace(microsecond=0)} Sent task from row {row_id} to queue"
                         )
-
                 # интервал между опросами таблицы
                 await asyncio.sleep(self.settings.REFRESH_INTERVAL)
 
-            except HttpError:
+            except HttpError or IndexError or SSLEOFError as e:
+                sentry_sdk.capture_exception(e)
                 await asyncio.sleep(self.settings.REFRESH_INTERVAL / 2)
-                pass
