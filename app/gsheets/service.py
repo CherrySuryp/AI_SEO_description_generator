@@ -37,9 +37,7 @@ class GSheet:
 
         # Инстанс, который работает с таблицей
         self.service = (
-            discovery.build("sheets", "v4", http=credentials.authorize(httplib2.Http()))
-            .spreadsheets()
-            .values()
+            discovery.build("sheets", "v4", http=credentials.authorize(httplib2.Http())).spreadsheets().values()
         )
 
     def read_sheet(self) -> List[str]:
@@ -68,9 +66,7 @@ class GSheet:
             body={"majorDimension": "ROWS", "values": [[content]]},
         ).execute()
 
-    def update_status(
-        self, row_id, new_status: str = Literal["В работе", "Завершено"]
-    ) -> None:
+    def update_status(self, row_id, new_status: str = Literal["В работе", "Завершено"]) -> None:
         """
         Обновление статуса в таблице
         :param new_status: Новый статус

@@ -44,9 +44,7 @@ class TaskService:
                         # отправляем задачу в очередь
                         self.send_task.worker.delay(data=sheet_data[i], row_id=row_id)
 
-                        print(
-                            f"{datetime.now().replace(microsecond=0)} Sent task from row {row_id} to queue"
-                        )
+                        print(f"{datetime.now().replace(microsecond=0)} Sent task from row {row_id} to queue")
                 # интервал между опросами таблицы
                 await asyncio.sleep(self.settings.REFRESH_INTERVAL)
 

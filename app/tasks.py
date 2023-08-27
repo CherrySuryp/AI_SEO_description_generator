@@ -27,12 +27,8 @@ class Worker:
     @staticmethod
     @celery.task(rate_limit=f"{settings.RPM_LIMIT}/m")
     def worker(data: list, row_id: int) -> None:
-        result = Worker.chatgpt.send_request(
-            TextUtils.row_to_ai_prompt(data)
-        )  # отправляем запрос в ChatGPT
-        used_keywords = Worker.text_utils.count_keywords(
-            result, data
-        )  # проверяем вхождение ключевых запросов в текст
+        result = Worker.chatgpt.send_request(TextUtils.row_to_ai_prompt(data))  # отправляем запрос в ChatGPT
+        used_keywords = Worker.text_utils.count_keywords(result, data)  # проверяем вхождение ключевых запросов в текст
 
         # Записываем результат в таблицу
         Worker.gsheet.update_cell(f"A{row_id}", "Завершено")

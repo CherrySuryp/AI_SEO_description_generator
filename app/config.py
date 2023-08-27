@@ -7,9 +7,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
 class ProdSettings(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file=os.path.join(dir_path, "../.env"), env_file_encoding="utf-8"
-    )
+    model_config = SettingsConfigDict(env_file=os.path.join(dir_path, "../.env"), env_file_encoding="utf-8")
 
     MODE: Literal["DEV", "PROD"]
 

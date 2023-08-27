@@ -1,3 +1,6 @@
+[tool.black]
+line-length = 120
+
 [tool.poetry]
 name = "ai-seo-description-generator"
 version = "1.0.0"
@@ -15,6 +18,8 @@ pydantic-settings = "^2.0.3"
 celery = "^5.3.1"
 redis = "^5.0.0"
 selenium = "^4.11.2"
+black = "^23.7.0"
+flake8 = "^6.1.0"
 
 
 [build-system]
