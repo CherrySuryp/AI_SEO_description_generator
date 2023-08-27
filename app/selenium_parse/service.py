@@ -63,3 +63,4 @@ class MpsParser:
 
 
 MpsParser().service()
+print("Git!")
