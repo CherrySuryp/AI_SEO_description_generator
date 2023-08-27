@@ -28,8 +28,10 @@ source venv/bin/activate
 ```
 ---
 ### 3. Установка зависимостей
+В проекте используется пакетный менеджер poetry для более удобной работы с зависимостями
 ```bash
-pip install -r requirements.txt
+pip install poetry
+poetry install
 ```
 
 ### 4. Конфигурационный файл .env
