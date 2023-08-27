@@ -2,3 +2,4 @@ venv
 .idea
 .env
 app/selenium_parse/cookies
+app/selenium_parse/keywords.json

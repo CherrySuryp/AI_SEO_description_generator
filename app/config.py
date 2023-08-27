@@ -10,13 +10,15 @@ class ProdSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=os.path.join(dir_path, "../.env"), env_file_encoding="utf-8")
 
     MODE: Literal["DEV", "PROD"]
+    USE_SENTRY: Literal["TRUE", "FALSE"]
+    SENTRY_DSN: str
+
+    MPSTATS_LOGIN: str
+    MPSTATS_PASS: str
 
     OPENAI_KEY: str
     RPM_LIMIT: int
     GPT_MODEL: str
-
-    USE_SENTRY: Literal["TRUE", "FALSE"]
-    SENTRY_DSN: str
 
     REFRESH_INTERVAL: int
     GSHEET_ID: str
@@ -24,7 +26,6 @@ class ProdSettings(BaseSettings):
 
 
 settings = ProdSettings()
-
 
 if ProdSettings().MODE == "PROD":
     redis_path = "redis://redis:6379/0"

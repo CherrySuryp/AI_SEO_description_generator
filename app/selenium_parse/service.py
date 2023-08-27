@@ -1,16 +1,22 @@
-import json
+import sys
 import os
-import time
+import json
+import pickle
+
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+
 from fake_useragent import UserAgent
-import pickle
+
+sys.path.append("..")
+from app.config import ProdSettings # noqa
 
 
 class MpsParser:
     def __init__(self, wb_sku: int):
+        self._settings = ProdSettings()
         self.wb_sku = wb_sku
         self._cookies_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "cookies")
 
@@ -36,9 +42,9 @@ class MpsParser:
         passwd_input = self._driver.find_element(By.NAME, "password")
 
         email_input.clear()
-        email_input.send_keys("timfcsm@yandex.ru")
+        email_input.send_keys(self._settings.MPSTATS_LOGIN)
         passwd_input.clear()
-        passwd_input.send_keys("MPstats2023")
+        passwd_input.send_keys(self._settings.MPSTATS_PASS)
         passwd_input.send_keys(Keys.ENTER)
 
         if save_cookies:
