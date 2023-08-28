@@ -64,7 +64,7 @@ class MpsParser:
 
     def auth_pipeline(self):
         """
-        Авторизация и инъекция cookie по условиям
+        Авторизации или инъекции cookie по условиям
         """
         if self.check_cookies():
             self._driver.get("https://mpstats.io/login")
@@ -123,6 +123,9 @@ class MpsParser:
         return kw_json
 
     def service(self):
+        """
+        Вызов бизнес логики
+        """
         try:
             self.auth_pipeline()
             top_item_sku = self.top_similar_item()
