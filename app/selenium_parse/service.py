@@ -7,11 +7,14 @@ import pickle
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 from fake_useragent import UserAgent
 
 sys.path.append("..")
-from app.config import ProdSettings # noqa
+from app.config import ProdSettings  # noqa
 
 
 class MpsParser:
@@ -22,10 +25,10 @@ class MpsParser:
 
         options = webdriver.ChromeOptions()
         options.add_argument(f"user-agent={UserAgent().googlechrome}")
-        # options.add_argument("--headless")
+        options.add_argument("--headless")
 
         self._driver = webdriver.Chrome(options=options)
-        self._driver.set_window_size(1000, 600)
+        # self._driver.set_window_size(1000, 600)
         self._driver.maximize_window()
 
     def check_cookies(self) -> bool:
@@ -73,12 +76,19 @@ class MpsParser:
 
     def get_keywords(self, sku: int):
         self._driver.get(f"https://mpstats.io/wb/item/{sku}")
+        self._driver.execute_script("document.body.style.zoom = '30%'")
 
-        scroll_table = self._driver.find_element(
-            By.XPATH, '//*[@id="mp-stats-app"]/div[2]/div/section/div[5]/div[2]/div[1]/div/div/div/div[2]/div[2]/div[3]'
-        )
         kw_json = {}
         while len(kw_json) <= 30:
+            scroll_table = WebDriverWait(self._driver, 10).until(
+                EC.visibility_of_element_located(
+                    (
+                        By.XPATH,
+                        '//*[@id="mp-stats-app"]/div[2]/div/section/div[5]'
+                        '/div[2]/div[1]/div/div/div/div[2]/div[2]/div[3]',
+                    )
+                )
+            )
             keywords = self._driver.find_elements(By.XPATH, '//a[@title="Информация по ключевому слову"]/span')
             count = self._driver.find_elements(By.XPATH, '//div[@col-id="wb_count"]')
             keywords = [i.text for i in keywords]
