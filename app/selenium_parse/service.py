@@ -18,13 +18,17 @@ from app.config import ProdSettings  # noqa
 
 
 class MpsParser:
-    def __init__(self, wb_sku: int):
+    def __init__(self, wb_sku: int, keywords_count: int = 30):
         self._settings = ProdSettings()
         self.wb_sku = wb_sku
         self._cookies_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "cookies")
 
+        self._keywords_count = keywords_count
+
         options = webdriver.ChromeOptions()
-        options.add_argument(f"user-agent={UserAgent().googlechrome}")
+        user_agent = UserAgent().googlechrome
+        print(user_agent)
+        options.add_argument(f"user-agent={user_agent}")
         options.add_argument("--headless")
 
         self._driver = webdriver.Chrome(options=options)
@@ -98,7 +102,7 @@ class MpsParser:
         self._driver.execute_script("document.body.style.zoom = '30%'")
 
         kw_json = {}
-        while len(kw_json) <= 30:
+        while len(kw_json) <= self._keywords_count:
             scroll_table = WebDriverWait(self._driver, 10).until(
                 ec.visibility_of_element_located(
                     (
@@ -139,4 +143,4 @@ class MpsParser:
             self._driver.quit()
 
 
-MpsParser(wb_sku=99204322).service()
+MpsParser(wb_sku=74643152).service()
