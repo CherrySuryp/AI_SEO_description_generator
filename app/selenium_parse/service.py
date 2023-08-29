@@ -2,10 +2,13 @@ import sys
 import os
 import json
 import pickle
+import time
+from pprint import pprint
 
 from typing import Dict
 
 from selenium import webdriver
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -33,7 +36,7 @@ class MpsParser:
 
         self._driver = webdriver.Chrome(options=options)
         # self._driver.set_window_size(1000, 600)
-        # self._driver.maximize_window()
+        self._driver.maximize_window()
 
     def check_cookies(self) -> bool:
         """
@@ -142,5 +145,36 @@ class MpsParser:
             self._driver.close()
             self._driver.quit()
 
+    def test_wb(self):
+        self._driver.get("https://www.wildberries.ru/catalog/74643153/detail.aspx")
 
-MpsParser(wb_sku=74643152).service()
+        button = WebDriverWait(self._driver, 10).until(
+            ec.visibility_of_element_located(
+                (
+                    By.XPATH,
+                    "// button[text() = 'Развернуть характеристики']"
+                )
+            )
+        )
+        self._driver.execute_script("arguments[0].scrollIntoView();", button)
+        button.click()
+
+        product_params_decor = self._driver.find_elements(
+                    By.CLASS_NAME,
+                    "product-params__cell-decor"
+                )
+
+        product_params_info = self._driver.find_elements(
+            By.CLASS_NAME,
+            "product-params__cell"
+        )
+
+        product_params_decor = [i.text for i in product_params_decor if i.text != '']
+        product_params_info = [i.text for i in product_params_info if i.text not in product_params_decor and i.text != '']
+
+        print(len(product_params_decor), len(product_params_info))
+        result = {decor: info for decor, info in zip(product_params_decor, product_params_info)}
+        json.dump(result, open("result.json", "w"), ensure_ascii=False, indent=1)
+
+
+MpsParser(wb_sku=74643152).test_wb()
