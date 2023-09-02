@@ -39,17 +39,17 @@ class TaskService:
 
                     if sheet_data[i][0] == "Собрать ключи":
                         self.gsheet.update_status(row_id=row_id, new_status="Ключи в сборке")
+
                         wb_sku = int(sheet_data[i][1])
-                        self.send_task.parse_mpstats_keywords.delay(row_id=row_id, wb_sku=wb_sku)
+                        self.send_task.parse_mpstats_keywords.apply_async((wb_sku, row_id), queue="mpstats")
 
                     elif sheet_data[i][0] == "Сгенерировать описание":
-
-                        # обновляем статус
                         self.gsheet.update_status(row_id=row_id, new_status="Генерация")
 
                         # отправляем задачу в очередь
-                        self.send_task.chatgpt_task.delay(data=sheet_data[i], row_id=row_id)
+                        self.send_task.chatgpt_task.apply_async((sheet_data[i], row_id), queue="chatgpt")
                         print(f"{datetime.now().replace(microsecond=0)} Sent task from row {row_id} to queue")
+
                 # интервал между опросами таблицы
                 await asyncio.sleep(self.settings.REFRESH_INTERVAL)
 

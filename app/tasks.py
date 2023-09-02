@@ -7,11 +7,22 @@ from selenium_parse.service import Parser
 
 from config import ProdSettings, redis_path
 
-import sys
-
-sys.path.append("..")
-
 celery = Celery("app", broker=redis_path, include=["tasks"])
+
+celery.conf.worker_pool_restarts = True
+celery.conf.task_queues = {} # noqa
+
+celery.conf.task_queues['chatgpt'] = {
+    'exchange': 'chatgpt',
+    'routing_key': 'chatgpt',
+    'concurrency': 4
+}
+celery.conf.task_queues['mpstats'] = {
+    'exchange': 'mpstats',
+    'routing_key': 'mpstats',
+    'concurrency': 1
+}
+celery.conf.task_default_queue = 'mpstats'
 
 
 class Worker:
@@ -25,7 +36,7 @@ class Worker:
     settings = ProdSettings()
 
     @staticmethod
-    @celery.task()
+    @celery.task(soft_time_limit=60, time_limit=120)
     def parse_mpstats_keywords(wb_sku: int, row_id: int):
         keywords = None
         try:
@@ -39,7 +50,7 @@ class Worker:
         Worker.gsheet.update_cell(cell_id=f"F{row_id}", content=keywords)
 
     @staticmethod
-    @celery.task(rate_limit=f"{settings.RPM_LIMIT}/m")
+    @celery.task(rate_limit=f"{settings.RPM_LIMIT}/m", soft_time_limit=60, time_limit=120)
     def chatgpt_task(data: list, row_id: int) -> None:
         result = Worker.chatgpt.send_request(TextUtils.row_to_ai_prompt(data))  # отправляем запрос в ChatGPT
         used_keywords = Worker.text_utils.count_keywords(result, data)  # проверяем вхождение ключевых запросов в текст
