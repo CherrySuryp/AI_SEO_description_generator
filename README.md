@@ -72,10 +72,18 @@ chmod +x main.py
 ```
 
 #### 2. Запуск Celery
-Запуск в отдельном терминале
+Запускается два воркера  
+
+**Воркер для работы с ChatGPT**
 ```bash
 cd app
-celery -A tasks:celery worker --pool=prefork --concurrency=4 --loglevel=INFO
+celery -A tasks worker  --loglevel=INFO --pool=prefork --concurrency=1 --queues=mpstats -n "mpstats@fedora"
+```
+
+**Воркер для работы с Mpstats**
+```bash
+cd app
+celery -A tasks worker  --loglevel=INFO --pool=prefork --concurrency=4 --queues=chatgpt -n "chatgpt@fedora"
 ```
 
 ### Запуск в Docker-Compose

@@ -1,16 +1,13 @@
 import asyncio
-from typing import NoReturn
-
-from ssl import SSLEOFError
+from datetime import datetime
 
 import sentry_sdk
 
 from gsheets.service import GSheet
 from config import ProdSettings
 from tasks import Worker
-from googleapiclient.errors import HttpError  # noqa
 
-from datetime import datetime
+from googleapiclient.errors import HttpError  # noqa
 
 
 class TaskService:
@@ -19,10 +16,9 @@ class TaskService:
         self.gsheet = GSheet()
         self.send_task = Worker()
 
-    async def fetcher_worker(self) -> NoReturn:
+    async def fetcher_worker(self) -> None:
         """
         Опрос таблицы каждые N секунд и отправка новых задач в очередь
-        :return:
         """
         print(f"{datetime.now().replace(microsecond=0)} Program has started")
 
@@ -38,20 +34,23 @@ class TaskService:
                     row_id = i + 2
 
                     if sheet_data[i][0] == "Собрать ключи":
-                        self.gsheet.update_status(row_id=row_id, new_status="Ключи в сборке")
 
-                        wb_sku = int(sheet_data[i][1])
-                        self.send_task.parse_mpstats_keywords.apply_async((wb_sku, row_id), queue="mpstats")
+                        # Отправляем задачу на сборку ключевых запросов по SKU карточки товара
+                        self.gsheet.update_status(row_id=row_id, new_status="Ключи в сборке")
+                        self.send_task.parse_mpstats_keywords.apply_async((int(sheet_data[i][1]), row_id), queue="mpstats")
+
+                    # ------------------------------------------------------------------------
 
                     elif sheet_data[i][0] == "Сгенерировать описание":
+
+                        # Отправляем задачу в ChatGPT на генерацию описания по заданным в таблице параметрам
                         self.gsheet.update_status(row_id=row_id, new_status="Генерация")
 
                         # отправляем задачу в очередь
                         self.send_task.chatgpt_task.apply_async((sheet_data[i], row_id), queue="chatgpt")
                         print(f"{datetime.now().replace(microsecond=0)} Sent task from row {row_id} to queue")
 
-                # интервал между опросами таблицы
-                await asyncio.sleep(self.settings.REFRESH_INTERVAL)
+                await asyncio.sleep(self.settings.REFRESH_INTERVAL)  # интервал между опросами таблицы
 
             except Exception as ex:
                 sentry_sdk.capture_exception(ex)
