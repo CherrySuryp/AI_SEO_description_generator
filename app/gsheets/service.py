@@ -67,7 +67,7 @@ class GSheet:
         ).execute()
 
     def update_status(
-            self, row_id, new_status: str = Literal["Ключи в сборке", "Ключи собраны", "Генерация", "Завершено"]
+            self, row_id, new_status: str
     ) -> None:
         """
         Обновление статуса в таблице

@@ -123,9 +123,8 @@ class Parser:
 
             self._driver.execute_script("arguments[0].scrollTop += 100;", scroll_table)
 
-        json.dump(kw_json, open("keywords.json", "w", encoding="utf8"), ensure_ascii=False, indent=1)
-        print("Json dumped")
-
+        # json.dump(kw_json, open("keywords.json", "w", encoding="utf8"), ensure_ascii=False, indent=1)
+        # print("Json dumped")
         return kw_json
 
     def parse_mpstats(self, wb_sku: int) -> Dict[str, int] | None:
@@ -135,15 +134,14 @@ class Parser:
         try:
             self._auth_pipeline()
             top_item_sku = self._top_similar_item(wb_sku=wb_sku)
-            return self._get_keywords(top_item_sku)
+            result = self._get_keywords(top_item_sku)
+            self._driver.quit()
+            return result
 
         except Exception as ex:
+            self._driver.quit()
             sentry_sdk.capture_exception(ex)
             return None
-
-        finally:
-            self._driver.close()
-            self._driver.quit()
 
     def get_wb_item_params(self):
         """

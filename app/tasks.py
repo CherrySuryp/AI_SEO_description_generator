@@ -22,17 +22,20 @@ class Worker:
     gsheet = GSheet()
     chatgpt = ChatGPT()
     text_utils = TextUtils()
-    parser = Parser()
     settings = ProdSettings()
 
     @staticmethod
     @celery.task()
     def parse_mpstats_keywords(wb_sku: int, row_id: int):
-        keywords = Worker.parser.parse_mpstats(wb_sku)
-        keywords = Worker.text_utils.transform_dict_keys_to_str(keywords)
+        keywords = None
+        try:
+            keywords = Parser().parse_mpstats(wb_sku)
+        except Exception as e:
+            print(e)
+        keywords = Worker.text_utils.transform_dict_keys_to_str(keywords) if keywords else None
 
         # Запись результата в таблицу
-        Worker.gsheet.update_status("Ключи собраны")
+        Worker.gsheet.update_status(row_id, "Ключи собраны")
         Worker.gsheet.update_cell(cell_id=f"F{row_id}", content=keywords)
 
     @staticmethod
@@ -42,6 +45,6 @@ class Worker:
         used_keywords = Worker.text_utils.count_keywords(result, data)  # проверяем вхождение ключевых запросов в текст
 
         # Записываем результат в таблицу
-        Worker.gsheet.update_status("Завершено")
+        Worker.gsheet.update_status(row_id, "Завершено")
         Worker.gsheet.update_cell(f"G{row_id}", result)
         Worker.gsheet.update_cell(f"H{row_id}", used_keywords)
