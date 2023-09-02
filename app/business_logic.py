@@ -32,22 +32,27 @@ class TaskService:
 
                 for i in range(len(sheet_data)):
                     """
-                    Если находится строчка со статусом "Взять в работу"
-                    и заполненными полями, то задача отправляется в очередь
+                    Если находится строчка со статусом "Взять в работу" или "Сгенерировать описание",
+                    то задача отправляется в очередь
                     """
-                    if sheet_data[i][0] == "Взять в работу" and sheet_data[i][1:5]:
-                        row_id = i + 2
+                    row_id = i + 2
+
+                    if sheet_data[i][0] == "Собрать ключи":
+                        self.gsheet.update_status(row_id=row_id, new_status="Ключи в сборке")
+                        wb_sku = int(sheet_data[i][1])
+                        self.send_task.parse_mpstats_keywords(row_id=row_id, wb_sku=wb_sku)
+
+                    elif sheet_data[i][0] == "Сгенерировать описание":
 
                         # обновляем статус
-                        self.gsheet.update_status(row_id=row_id, new_status="В работе")
+                        self.gsheet.update_status(row_id=row_id, new_status="Генерация")
 
                         # отправляем задачу в очередь
-                        self.send_task.worker.delay(data=sheet_data[i], row_id=row_id)
-
+                        self.send_task.chatgpt_task.delay(data=sheet_data[i], row_id=row_id)
                         print(f"{datetime.now().replace(microsecond=0)} Sent task from row {row_id} to queue")
                 # интервал между опросами таблицы
                 await asyncio.sleep(self.settings.REFRESH_INTERVAL)
 
-            except HttpError or IndexError or SSLEOFError as e:
-                sentry_sdk.capture_exception(e)
+            except Exception as ex:
+                sentry_sdk.capture_exception(ex)
                 await asyncio.sleep(self.settings.REFRESH_INTERVAL / 2)

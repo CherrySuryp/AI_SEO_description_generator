@@ -22,7 +22,7 @@ class GSheet:
     def __init__(
         self,
         sheet_name: str = "Запросы",
-        sheet_range: str = "A2:E1000",
+        sheet_range: str = "A2:J1000",
     ):
         self.settings = ProdSettings()  # Настройки
 
@@ -37,7 +37,7 @@ class GSheet:
 
         # Инстанс, который работает с таблицей
         self.service = (
-            discovery.build("sheets", "v4", http=credentials.authorize(httplib2.Http())).spreadsheets().values()
+            discovery.build("sheets", "v4", http=credentials.authorize(httplib2.Http())).spreadsheets().values() # noqa
         )
 
     def read_sheet(self) -> List[str]:
@@ -66,7 +66,9 @@ class GSheet:
             body={"majorDimension": "ROWS", "values": [[content]]},
         ).execute()
 
-    def update_status(self, row_id, new_status: str = Literal["В работе", "Завершено"]) -> None:
+    def update_status(
+            self, row_id, new_status: str = Literal["Ключи в сборке", "Ключи собраны", "Генерация", "Завершено"]
+    ) -> None:
         """
         Обновление статуса в таблице
         :param new_status: Новый статус

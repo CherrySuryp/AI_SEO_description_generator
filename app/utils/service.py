@@ -20,6 +20,10 @@ class TextUtils:
         )
 
     @staticmethod
+    def transform_dict_keys_to_str(data: dict):
+        return " ".join([str(i) for i in list(data.keys())])
+
+    @staticmethod
     def count_keywords(text: str, data: list) -> str:
         """
         **Функция в разработке.**
