@@ -1,6 +1,3 @@
-from pprint import pprint
-
-
 class TextUtils:
     """
     Утилиты для работы с текстом
@@ -14,7 +11,7 @@ class TextUtils:
         :return:
         """
         item_name, base_prompt, specifications, keywords = data[2:6]
-        specifications = specifications.replace('\n', ', ')
+        specifications = specifications.replace("\n", ", ")
         return (
             f"{base_prompt}\n"
             f"Товар: {item_name}\n"

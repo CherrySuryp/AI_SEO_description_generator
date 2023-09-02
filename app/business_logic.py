@@ -34,15 +34,15 @@ class TaskService:
                     row_id = i + 2
 
                     if sheet_data[i][0] == "Собрать ключи":
-
                         # Отправляем задачу на сборку ключевых запросов по SKU карточки товара
                         self.gsheet.update_status(row_id=row_id, new_status="Ключи в сборке")
-                        self.send_task.parse_mpstats_keywords.apply_async((int(sheet_data[i][1]), row_id), queue="mpstats")
+                        self.send_task.parse_mpstats_keywords.apply_async(
+                            (int(sheet_data[i][1]), row_id), queue="mpstats"
+                        )
 
                     # ------------------------------------------------------------------------
 
                     elif sheet_data[i][0] == "Сгенерировать описание":
-
                         # Отправляем задачу в ChatGPT на генерацию описания по заданным в таблице параметрам
                         self.gsheet.update_status(row_id=row_id, new_status="Генерация")
 

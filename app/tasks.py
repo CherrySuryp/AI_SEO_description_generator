@@ -10,19 +10,11 @@ from config import ProdSettings, redis_path
 celery = Celery("app", broker=redis_path, include=["tasks"])
 
 celery.conf.worker_pool_restarts = True
-celery.conf.task_queues = {} # noqa
+celery.conf.task_queues = {}  # noqa
 
-celery.conf.task_queues['chatgpt'] = {
-    'exchange': 'chatgpt',
-    'routing_key': 'chatgpt',
-    'concurrency': 4
-}
-celery.conf.task_queues['mpstats'] = {
-    'exchange': 'mpstats',
-    'routing_key': 'mpstats',
-    'concurrency': 1
-}
-celery.conf.task_default_queue = 'mpstats'
+celery.conf.task_queues["chatgpt"] = {"exchange": "chatgpt", "routing_key": "chatgpt", "concurrency": 4}
+celery.conf.task_queues["mpstats"] = {"exchange": "mpstats", "routing_key": "mpstats", "concurrency": 1}
+celery.conf.task_default_queue = "mpstats"
 
 
 class Worker:

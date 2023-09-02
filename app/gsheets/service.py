@@ -1,5 +1,5 @@
 import json
-from typing import List, Literal
+from typing import List
 import httplib2
 from apiclient import discovery
 from oauth2client.service_account import ServiceAccountCredentials
@@ -37,7 +37,7 @@ class GSheet:
 
         # Инстанс, который работает с таблицей
         self.service = (
-            discovery.build("sheets", "v4", http=credentials.authorize(httplib2.Http())).spreadsheets().values() # noqa
+            discovery.build("sheets", "v4", http=credentials.authorize(httplib2.Http())).spreadsheets().values()  # noqa
         )
 
     def read_sheet(self) -> List[str]:
@@ -66,9 +66,7 @@ class GSheet:
             body={"majorDimension": "ROWS", "values": [[content]]},
         ).execute()
 
-    def update_status(
-            self, row_id, new_status: str
-    ) -> None:
+    def update_status(self, row_id, new_status: str) -> None:
         """
         Обновление статуса в таблице
         :param new_status: Новый статус

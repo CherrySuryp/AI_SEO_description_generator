@@ -109,7 +109,7 @@ class Parser:
                     (
                         By.XPATH,
                         '//*[@id="mp-stats-app"]/div[2]/div/section/div[5]'
-                        '/div[2]/div[1]/div/div/div/div[2]/div[2]/div[3]',
+                        "/div[2]/div[1]/div/div/div/div[2]/div[2]/div[3]",
                     )
                 )
             )
@@ -150,28 +150,19 @@ class Parser:
         self._driver.get("https://www.wildberries.ru/catalog/74643153/detail.aspx")
 
         button = WebDriverWait(self._driver, 10).until(
-            ec.visibility_of_element_located(
-                (
-                    By.XPATH,
-                    "// button[text() = 'Развернуть характеристики']"
-                )
-            )
+            ec.visibility_of_element_located((By.XPATH, "// button[text() = 'Развернуть характеристики']"))
         )
         self._driver.execute_script("arguments[0].scrollIntoView();", button)
         button.click()
 
-        product_params_decor = self._driver.find_elements(
-                    By.CLASS_NAME,
-                    "product-params__cell-decor"
-                )
+        product_params_decor = self._driver.find_elements(By.CLASS_NAME, "product-params__cell-decor")
 
-        product_params_info = self._driver.find_elements(
-            By.CLASS_NAME,
-            "product-params__cell"
-        )
+        product_params_info = self._driver.find_elements(By.CLASS_NAME, "product-params__cell")
 
-        product_params_decor = [i.text for i in product_params_decor if i.text != '']
-        product_params_info = [i.text for i in product_params_info if i.text not in product_params_decor and i.text != '']
+        product_params_decor = [i.text for i in product_params_decor if i.text != ""]
+        product_params_info = [
+            i.text for i in product_params_info if i.text not in product_params_decor and i.text != ""
+        ]
 
         # print(len(product_params_decor), len(product_params_info))
         result = {decor: info for decor, info in zip(product_params_decor, product_params_info)}
