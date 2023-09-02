@@ -40,7 +40,7 @@ class TaskService:
                     if sheet_data[i][0] == "Собрать ключи":
                         self.gsheet.update_status(row_id=row_id, new_status="Ключи в сборке")
                         wb_sku = int(sheet_data[i][1])
-                        self.send_task.parse_mpstats_keywords(row_id=row_id, wb_sku=wb_sku)
+                        self.send_task.parse_mpstats_keywords.delay(row_id=row_id, wb_sku=wb_sku)
 
                     elif sheet_data[i][0] == "Сгенерировать описание":
 

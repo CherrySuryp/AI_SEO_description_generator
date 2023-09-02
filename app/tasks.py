@@ -30,6 +30,8 @@ class Worker:
     def parse_mpstats_keywords(wb_sku: int, row_id: int):
         keywords = Worker.parser.parse_mpstats(wb_sku)
         keywords = Worker.text_utils.transform_dict_keys_to_str(keywords)
+
+        # Запись результата в таблицу
         Worker.gsheet.update_status("Ключи собраны")
         Worker.gsheet.update_cell(cell_id=f"F{row_id}", content=keywords)
 
