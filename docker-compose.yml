@@ -22,7 +22,7 @@ services:
     working_dir: /app
     command: ["celery", "-A", "tasks", "worker", "--loglevel=INFO", "--pool=prefork", "--concurrency=1", "--queues=mpstats", "-n", "mpstats@fedora" ]
     volumes:
-      - ai-seo-bot:/app/selenium_parse
+      - ai-seo-bot:/app
     depends_on:
       - redis
 
