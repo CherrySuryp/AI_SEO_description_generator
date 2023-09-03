@@ -30,6 +30,8 @@ class Parser:
         options = webdriver.ChromeOptions()
         options.add_argument(f"user-agent={UserAgent().googlechrome}")
         options.add_argument("--headless")
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
 
         self._driver = webdriver.Chrome(options=options)
 
