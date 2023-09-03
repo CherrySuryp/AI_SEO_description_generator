@@ -13,7 +13,7 @@ services:
     working_dir: /app
     command: ["celery", "-A", "tasks", "worker", "--loglevel=INFO", "--pool=prefork", "--concurrency=4", "--queues=chatgpt", "-n", "mpstats@fedora"]
     volumes:
-      - ai-seo-bot:/app
+      - ai-seo-bot
     depends_on:
       - redis
 
@@ -24,7 +24,7 @@ services:
     working_dir: /app
     command: ["celery", "-A", "tasks", "worker", "--loglevel=INFO", "--pool=prefork", "--concurrency=1", "--queues=mpstats", "-n", "mpstats@fedora" ]
     volumes:
-      - ai-seo-bot:/app
+      - ai-seo-bot
     depends_on:
       - redis
 
@@ -32,7 +32,7 @@ services:
     build: .
     container_name: main_app
     volumes:
-      - ai-seo-bot:/app
+      - ai-seo-bot
     depends_on:
       - celery_mpstats
       - celery_chatgpt
