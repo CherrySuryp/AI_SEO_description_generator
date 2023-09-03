@@ -27,13 +27,14 @@ class Parser:
 
         self._keywords_count = keywords_count
 
+        chrome_service = webdriver.ChromeService(executable_path=self._chromedriver)
         options = webdriver.ChromeOptions()
         options.add_argument(f"user-agent={UserAgent().googlechrome}")
         options.add_argument("--headless")
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
 
-        self._driver = webdriver.Chrome(options=options)
+        self._driver = webdriver.Chrome(options=options, service=chrome_service)
 
         # self._driver.set_window_size(1000, 600)
         # self._driver.maximize_window()
