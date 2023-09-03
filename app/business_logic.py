@@ -1,15 +1,13 @@
 import asyncio
-
-from ssl import SSLEOFError
+from datetime import datetime
 
 import sentry_sdk
 
 from gsheets.service import GSheet
 from config import ProdSettings
 from tasks import Worker
-from googleapiclient.errors import HttpError  # noqa
 
-from datetime import datetime
+from googleapiclient.errors import HttpError  # noqa
 
 
 class TaskService:
@@ -21,7 +19,6 @@ class TaskService:
     async def fetcher_worker(self) -> None:
         """
         Опрос таблицы каждые N секунд и отправка новых задач в очередь
-        :return:
         """
         print(f"{datetime.now().replace(microsecond=0)} Program has started")
 
@@ -31,24 +28,30 @@ class TaskService:
 
                 for i in range(len(sheet_data)):
                     """
-                    Если находится строчка со статусом "Взять в работу"
-                    и заполненными полями, то задача отправляется в очередь
+                    Если находится строчка со статусом "Взять в работу" или "Сгенерировать описание",
+                    то задача отправляется в очередь
                     """
-                    if sheet_data[i][0] == "Взять в работу" and sheet_data[i][1:5]:
-                        row_id = i + 2
+                    row_id = i + 2
 
-                        # обновляем статус
-                        self.gsheet.update_status(row_id=row_id, new_status="В работе")
+                    if sheet_data[i][0] == "Собрать ключи":
+                        # Отправляем задачу на сборку ключевых запросов по SKU карточки товара
+                        self.gsheet.update_status(row_id=row_id, new_status="Ключи в сборке")
+                        self.send_task.parse_mpstats_keywords.apply_async(
+                            (int(sheet_data[i][1]), row_id), queue="mpstats"
+                        )
+
+                    # ------------------------------------------------------------------------
+
+                    elif sheet_data[i][0] == "Сгенерировать описание":
+                        # Отправляем задачу в ChatGPT на генерацию описания по заданным в таблице параметрам
+                        self.gsheet.update_status(row_id=row_id, new_status="Генерация")
 
                         # отправляем задачу в очередь
-                        self.send_task.worker.delay(data=sheet_data[i], row_id=row_id)
+                        self.send_task.chatgpt_task.apply_async((sheet_data[i], row_id), queue="chatgpt")
+                        print(f"{datetime.now().replace(microsecond=0)} Sent task from row {row_id} to queue")
 
-                        print(
-                            f"{datetime.now().replace(microsecond=0)} Sent task from row {row_id} to queue"
-                        )
-                # интервал между опросами таблицы
-                await asyncio.sleep(self.settings.REFRESH_INTERVAL)
+                await asyncio.sleep(self.settings.REFRESH_INTERVAL)  # интервал между опросами таблицы
 
-            except HttpError or IndexError or SSLEOFError as e:
-                sentry_sdk.capture_exception(e)
+            except Exception as ex:
+                sentry_sdk.capture_exception(ex)
                 await asyncio.sleep(self.settings.REFRESH_INTERVAL / 2)

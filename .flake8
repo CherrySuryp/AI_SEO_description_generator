@@ -1,0 +1,5 @@
+[flake8]
+ignore = E501,E231
+max-line-length = 120
+extend-ignore = E203
+inline-quotes = double  # Используйте двойные кавычки (Black также использует двойные кавычки)

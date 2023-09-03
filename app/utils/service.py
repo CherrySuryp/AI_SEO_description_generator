@@ -10,14 +10,18 @@ class TextUtils:
         :param data:
         :return:
         """
-        item_name, base_prompt, specifications, keywords = data[1:5]
-
+        item_name, base_prompt, specifications, keywords = data[2:6]
+        specifications = specifications.replace("\n", ", ")
         return (
             f"{base_prompt}\n"
             f"Товар: {item_name}\n"
             f"Характеристики: {specifications}\n"
             f"Ключевые слова: {keywords}"
         )
+
+    @staticmethod
+    def transform_dict_keys_to_str(data: dict):
+        return ", ".join([str(i) for i in list(data.keys())])
 
     @staticmethod
     def count_keywords(text: str, data: list) -> str:

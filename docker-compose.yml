@@ -5,29 +5,29 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
-  celery:
-    container_name: celery
+
+  celery_chatgpt:
+    container_name: celery_chatgpt
     build:
       context: .
     working_dir: /app
-    command: ["celery", "-A", "tasks:celery", "worker", "--pool=prefork", "--concurrency=4", "--loglevel=INFO"]
+    command: ["celery", "-A", "tasks", "worker", "--loglevel=INFO", "--pool=prefork", "--concurrency=4", "--queues=chatgpt", "-n", "mpstats@fedora"]
     depends_on:
       - redis
 
-  flower:
-    container_name: flower
+  celery_mpstats:
+    container_name: celery_mpstats
     build:
       context: .
     working_dir: /app
-    command: ["celery", "-A", "tasks:celery", "flower"]
+    command: ["celery", "-A", "tasks", "worker", "--loglevel=INFO", "--pool=prefork", "--concurrency=1", "--queues=mpstats", "-n", "mpstats@fedora" ]
     depends_on:
       - redis
-      - celery
-    ports:
-      - "5555:5555"
+
   main_app:
     build: .
     container_name: main_app
     depends_on:
-      - celery
+      - celery_mpstats
+      - celery_chatgpt
       - redis
