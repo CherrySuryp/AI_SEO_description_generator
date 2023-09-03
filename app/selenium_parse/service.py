@@ -170,6 +170,3 @@ class Parser:
         # print(len(product_params_decor), len(product_params_info))
         result = {decor: info for decor, info in zip(product_params_decor, product_params_info)}
         json.dump(result, open("result.json", "w"), ensure_ascii=False, indent=1)
-
-
-Parser().parse_mpstats(119316952)
