@@ -68,7 +68,7 @@ class Parser:
 
         if save_cookies:
             pickle.dump(self._driver.get_cookies(), open("cookies", "wb"))
-            print("Cookies saved")
+            print(f"Cookies saved to {self._cookies_path}")
 
     def _auth_pipeline(self):
         """
