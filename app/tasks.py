@@ -1,3 +1,4 @@
+import sentry_sdk
 from celery import Celery
 
 from ai.service import ChatGPT
@@ -34,7 +35,7 @@ class Worker:
         try:
             keywords = Parser().parse_mpstats(wb_sku)
         except Exception as e:
-            print(e)
+            sentry_sdk.capture_exception(e)
         keywords = Worker.text_utils.transform_dict_keys_to_str(keywords) if keywords else None
 
         # Запись результата в таблицу
@@ -44,10 +45,15 @@ class Worker:
     @staticmethod
     @celery.task(rate_limit=f"{settings.RPM_LIMIT}/m", soft_time_limit=60, time_limit=120)
     def chatgpt_task(data: list, row_id: int) -> None:
-        result = Worker.chatgpt.send_request(TextUtils.row_to_ai_prompt(data))  # отправляем запрос в ChatGPT
-        used_keywords = Worker.text_utils.count_keywords(result, data)  # проверяем вхождение ключевых запросов в текст
+        try:
+            result = Worker.chatgpt.send_request(TextUtils.row_to_ai_prompt(data))  # отправляем запрос в ChatGPT
 
-        # Записываем результат в таблицу
-        Worker.gsheet.update_status(row_id, "Завершено")
-        Worker.gsheet.update_cell(f"G{row_id}", result)
-        Worker.gsheet.update_cell(f"H{row_id}", used_keywords)
+            # проверяем вхождение ключевых запросов в текст
+            used_keywords = Worker.text_utils.count_keywords(result, data)
+
+            # Записываем результат в таблицу
+            Worker.gsheet.update_status(row_id, "Завершено")
+            Worker.gsheet.update_cell(f"G{row_id}", result)
+            Worker.gsheet.update_cell(f"H{row_id}", used_keywords)
+        except Exception as e:
+            sentry_sdk.capture_exception(e)
