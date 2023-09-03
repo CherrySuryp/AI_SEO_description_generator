@@ -23,18 +23,18 @@ class Parser:
     def __init__(self, keywords_count: int = 30):
         self._settings = ProdSettings()
         self._cookies_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "cookies")
+        self._chromedriver = os.path.join(os.path.dirname(os.path.realpath(__file__)), "chromedriver")
 
         self._keywords_count = keywords_count
 
         options = webdriver.ChromeOptions()
-        user_agent = UserAgent().googlechrome
-        print(user_agent)
-        options.add_argument(f"user-agent={user_agent}")
+        options.add_argument(f"user-agent={UserAgent().googlechrome}")
         options.add_argument("--headless")
 
         self._driver = webdriver.Chrome(options=options)
+
         # self._driver.set_window_size(1000, 600)
-        self._driver.maximize_window()
+        # self._driver.maximize_window()
 
     def _check_cookies(self) -> bool:
         """
@@ -167,3 +167,6 @@ class Parser:
         # print(len(product_params_decor), len(product_params_info))
         result = {decor: info for decor, info in zip(product_params_decor, product_params_info)}
         json.dump(result, open("result.json", "w"), ensure_ascii=False, indent=1)
+
+
+Parser().parse_mpstats(119316952)

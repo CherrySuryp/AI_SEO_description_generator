@@ -104,7 +104,6 @@ urllib3==1.26.16
 vine==5.0.0
 virtualenv==20.24.3
 wcwidth==0.2.6
-webdriver-manager==4.0.0
 wsproto==1.2.0
 yarl==1.9.2
 zipp==3.16.2
