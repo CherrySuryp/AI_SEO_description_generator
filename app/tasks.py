@@ -17,6 +17,8 @@ celery.conf.task_queues["chatgpt"] = {"exchange": "chatgpt", "routing_key": "cha
 celery.conf.task_queues["mpstats"] = {"exchange": "mpstats", "routing_key": "mpstats", "concurrency": 1}
 celery.conf.task_default_queue = "mpstats"
 
+celery.conf.result_expires = 60
+
 
 class Worker:
     """
