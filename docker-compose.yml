@@ -21,6 +21,8 @@ services:
       context: .
     working_dir: /app
     command: ["celery", "-A", "tasks", "worker", "--loglevel=INFO", "--pool=prefork", "--concurrency=1", "--queues=mpstats", "-n", "mpstats@fedora" ]
+    volumes:
+      - ai-seo-bot:/app
     depends_on:
       - redis
 
@@ -31,3 +33,6 @@ services:
       - celery_mpstats
       - celery_chatgpt
       - redis
+
+volumes:
+   ai-seo-bot:
