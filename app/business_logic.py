@@ -36,18 +36,18 @@ class TaskService:
                     row_id = i + 2
 
                     if sheet_data[i][0] == "Собрать ключи":
-                        wb_sku = int(re.search(r'\d+', sheet_data[i][1]).group())
+                        wb_sku = int(re.search(r"\d+", sheet_data[i][1]).group())
 
                         # Отправляем задачу на сборку ключевых запросов по SKU карточки товара
                         self.gsheet.update_status(row_id=row_id, new_status="Ключи в сборке")
                         queue = chain(
-                            self.send_task.parse_wb_item_name.si(wb_sku, row_id) |
-                            self.send_task.parse_wb_item_params.si(wb_sku, row_id) |
-                            self.send_task.parse_mpstats_keywords.si(wb_sku, row_id)
+                            self.send_task.parse_wb_item_name.si(wb_sku, row_id)
+                            | self.send_task.parse_wb_item_params.si(wb_sku, row_id)
+                            | self.send_task.parse_mpstats_keywords.si(wb_sku, row_id)
                         )
                         queue.apply_async(queue="mpstats")
 
-# ----------------------------------------------------------------------------------------------------------------------
+                    # ----------------------------------------------------------------------------------------------------------------------
 
                     elif sheet_data[i][0] == "Сгенерировать описание":
                         # Отправляем задачу в ChatGPT на генерацию описания по заданным в таблице параметрам
