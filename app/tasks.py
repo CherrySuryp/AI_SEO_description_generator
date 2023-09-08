@@ -32,6 +32,24 @@ class Worker:
 
     @staticmethod
     @celery.task(soft_time_limit=60, time_limit=120)
+    def parse_wb_item_name(wb_sku: int, row_id: int):
+        try:
+            item_name = Parser().get_wb_item_name(wb_sku)
+            Worker.gsheet.update_cell(cell_id=f"C{row_id}", content=item_name)
+        except Exception as e:
+            sentry_sdk.capture_exception(e)
+
+    @staticmethod
+    @celery.task(soft_time_limit=60, time_limit=120)
+    def parse_wb_item_params(wb_sku: int, row_id: int):
+        try:
+            item_params = Parser().get_wb_item_params(wb_sku)
+            Worker.gsheet.update_cell(cell_id=f"E{row_id}", content=str(item_params))
+        except Exception as e:
+            sentry_sdk.capture_exception(e)
+
+    @staticmethod
+    @celery.task(soft_time_limit=60, time_limit=120)
     def parse_mpstats_keywords(wb_sku: int, row_id: int):
         keywords = None
         try:

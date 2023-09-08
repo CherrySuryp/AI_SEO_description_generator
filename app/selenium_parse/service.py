@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import pickle
+import time
 
 from typing import Dict
 
@@ -23,11 +24,11 @@ class Parser:
     def __init__(self, keywords_count: int = 30):
         self._settings = ProdSettings()
         self._cookies_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "cookies")
-        self._chromedriver = os.path.join(os.path.dirname(os.path.realpath(__file__)), "chromedriver")
-
         self._keywords_count = keywords_count
 
-        chrome_service = webdriver.ChromeService(executable_path=self._chromedriver)
+        chromedriver = os.path.join(os.path.dirname(os.path.realpath(__file__)), "chromedriver")
+
+        chrome_service = webdriver.ChromeService(executable_path=chromedriver)
         options = webdriver.ChromeOptions()
         options.add_argument(f"user-agent={UserAgent().googlechrome}")
         options.add_argument("--headless")
@@ -36,8 +37,8 @@ class Parser:
 
         self._driver = webdriver.Chrome(options=options, service=chrome_service)
 
+        self._driver.maximize_window()
         # self._driver.set_window_size(1000, 600)
-        # self._driver.maximize_window()
 
     def _check_cookies(self) -> bool:
         """
@@ -127,7 +128,6 @@ class Parser:
             self._driver.execute_script("arguments[0].scrollTop += 100;", scroll_table)
 
         # json.dump(kw_json, open("keywords.json", "w", encoding="utf8"), ensure_ascii=False, indent=1)
-        # print("Json dumped")
         return kw_json
 
     def parse_mpstats(self, wb_sku: int) -> Dict[str, int] | None:
@@ -146,11 +146,11 @@ class Parser:
             sentry_sdk.capture_exception(ex)
             return None
 
-    def get_wb_item_params(self):
+    def get_wb_item_params(self, sku: str | int) -> Dict[str, str]:
         """
         WIP
         """
-        self._driver.get("https://www.wildberries.ru/catalog/74643153/detail.aspx")
+        self._driver.get(f"https://www.wildberries.ru/catalog/{sku}/detail.aspx")
 
         button = WebDriverWait(self._driver, 10).until(
             ec.visibility_of_element_located((By.XPATH, "// button[text() = 'Развернуть характеристики']"))
@@ -159,14 +159,18 @@ class Parser:
         button.click()
 
         product_params_decor = self._driver.find_elements(By.CLASS_NAME, "product-params__cell-decor")
-
         product_params_info = self._driver.find_elements(By.CLASS_NAME, "product-params__cell")
-
         product_params_decor = [i.text for i in product_params_decor if i.text != ""]
         product_params_info = [
             i.text for i in product_params_info if i.text not in product_params_decor and i.text != ""
         ]
-
-        # print(len(product_params_decor), len(product_params_info))
         result = {decor: info for decor, info in zip(product_params_decor, product_params_info)}
-        json.dump(result, open("result.json", "w"), ensure_ascii=False, indent=1)
+        # json.dump(result, open("result.json", "w"), ensure_ascii=False, indent=1)
+        return result
+
+    def get_wb_item_name(self, sku: str | int) -> str:
+        self._driver.get(f"https://www.wildberries.ru/catalog/{sku}/detail.aspx")
+        product_name = WebDriverWait(self._driver, 10).until(
+            ec.visibility_of_element_located((By.CSS_SELECTOR, 'h1[data-link="text{:selectedNomenclature^goodsName}"]'))
+        )
+        return str(product_name.text)
