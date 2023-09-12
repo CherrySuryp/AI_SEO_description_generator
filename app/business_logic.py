@@ -9,8 +9,6 @@ from gsheets.service import GSheet
 from config import ProdSettings
 from tasks import Worker
 
-from googleapiclient.errors import HttpError  # noqa
-
 
 class TaskService:
     def __init__(self):
@@ -29,31 +27,31 @@ class TaskService:
                 sheet_data = self.gsheet.read_sheet()  # чтение таблицы
 
                 for i in range(len(sheet_data)):
-                    """
-                    Если находится строчка со статусом "Взять в работу" или "Сгенерировать описание",
-                    то задача отправляется в очередь
-                    """
                     row_id = i + 2
 
                     if sheet_data[i][0] == "Собрать ключи":
-                        wb_sku = int(re.search(r"\d+", sheet_data[i][1]).group())
+                        """
+                        Отправляет задачу на сборку информации с WB и MpStats
+                        """
 
-                        # Отправляем задачу на сборку ключевых запросов по SKU карточки товара
+                        wb_sku = int(re.search(r"\d+", sheet_data[i][1]).group()) # Достаем sku из ссылки
+
                         self.gsheet.update_status(row_id=row_id, new_status="Ключи в сборке")
                         queue = chain(
-                            self.send_task.parse_wb_item_name.si(wb_sku, row_id)
-                            | self.send_task.parse_wb_item_params.si(wb_sku, row_id)
-                            | self.send_task.parse_mpstats_keywords.si(wb_sku, row_id)
+                            self.send_task.parse_wb_item_name.si(wb_sku, row_id)  # Получение названия товара
+                            | self.send_task.parse_wb_item_params.si(wb_sku, row_id)  # Получение характеристик товара
+                            | self.send_task.parse_mpstats_keywords.si(wb_sku, row_id)  # Получение ключевых слов
                         )
                         queue.apply_async(queue="mpstats")
 
-                    # ----------------------------------------------------------------------------------------------------------------------
+                    # -------------------------------------------------------------------------------------------------
 
                     elif sheet_data[i][0] == "Сгенерировать описание":
-                        # Отправляем задачу в ChatGPT на генерацию описания по заданным в таблице параметрам
-                        self.gsheet.update_status(row_id=row_id, new_status="Генерация")
+                        """
+                        Отправляет задачу на генерацию описания в  ChatGPT
+                        """
 
-                        # отправляем задачу в очередь
+                        self.gsheet.update_status(row_id=row_id, new_status="Генерация")
                         self.send_task.chatgpt_task.apply_async((sheet_data[i], row_id), queue="chatgpt")
                         print(f"{datetime.now().replace(microsecond=0)} Sent task from row {row_id} to queue")
 
