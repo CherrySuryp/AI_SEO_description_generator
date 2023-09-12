@@ -10,7 +10,7 @@ class TextUtils:
         :param data:
         :return:
         """
-        item_name, base_prompt, specifications, keywords = data[2:6]
+        item_name, base_prompt, specifications, keywords = data[3:8]
         specifications = specifications.replace("\n", ", ")
         return (
             f"{base_prompt}\n"

@@ -66,14 +66,11 @@ class Worker:
     @celery.task(rate_limit=f"{settings.RPM_LIMIT}/m", soft_time_limit=60, time_limit=120)
     def chatgpt_task(data: list, row_id: int) -> None:
         try:
-            result = Worker.chatgpt.send_request(TextUtils.row_to_ai_prompt(data))  # отправляем запрос в ChatGPT
-
-            # проверяем вхождение ключевых запросов в текст
-            used_keywords = Worker.text_utils.count_keywords(result, data)
+            prompt = TextUtils.row_to_ai_prompt(data)
+            result = Worker.chatgpt.send_request(prompt)  # отправляем запрос в ChatGPT
 
             # Записываем результат в таблицу
             Worker.gsheet.update_status(row_id, "Завершено")
             Worker.gsheet.update_cell(f"G{row_id}", result)
-            Worker.gsheet.update_cell(f"H{row_id}", used_keywords)
         except Exception as e:
             sentry_sdk.capture_exception(e)
