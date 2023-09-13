@@ -11,6 +11,8 @@ from config import ProdSettings, redis_path
 celery = Celery("app", broker=redis_path, include=["tasks"])
 
 celery.conf.worker_pool_restarts = True
+celery.conf.broker_connection_retry_on_startup = True
+
 celery.conf.task_queues = {}  # noqa
 
 celery.conf.task_queues["chatgpt"] = {"exchange": "chatgpt", "routing_key": "chatgpt", "concurrency": 4}
@@ -35,7 +37,7 @@ class Worker:
     def parse_wb_item_name(wb_sku: int, row_id: int):
         try:
             item_name = Parser().get_wb_item_name(wb_sku)
-            Worker.gsheet.update_cell(cell_id=f"C{row_id}", content=item_name)
+            Worker.gsheet.update_cell(content=item_name, row_id=f"E{row_id}")
         except Exception as e:
             sentry_sdk.capture_exception(e)
 
@@ -44,33 +46,44 @@ class Worker:
     def parse_wb_item_params(wb_sku: int, row_id: int):
         try:
             item_params = Parser().get_wb_item_params(wb_sku)
-            Worker.gsheet.update_cell(cell_id=f"E{row_id}", content=str(item_params))
+            Worker.gsheet.update_cell(content=str(item_params), row_id=f"F{row_id}")
         except Exception as e:
             sentry_sdk.capture_exception(e)
 
     @staticmethod
     @celery.task(soft_time_limit=60, time_limit=120)
-    def parse_mpstats_keywords(wb_sku: int, row_id: int):
+    def parse_wb_item_desc(wb_sku: int, row_id: int):
+        try:
+            item_desc = Parser().get_wb_item_desc(wb_sku)
+            Worker.gsheet.update_cell(content=str(item_desc), row_id=f"G{row_id}")
+        except Exception as e:
+            sentry_sdk.capture_exception(e)
+
+    @staticmethod
+    @celery.task(soft_time_limit=60, time_limit=120)
+    def parse_mpstats_keywords(auto_mode: str, wb_sku: int, row_id: int):
         keywords = None
         try:
             keywords = Parser().parse_mpstats(wb_sku)
         except Exception as e:
             sentry_sdk.capture_exception(e)
-        keywords = Worker.text_utils.transform_dict_keys_to_str(keywords) if keywords else None
 
-        # Запись результата в таблицу
-        Worker.gsheet.update_status(row_id, "Ключи собраны")
-        Worker.gsheet.update_cell(cell_id=f"F{row_id}", content=keywords)
+        keywords = Worker.text_utils.transform_dict_keys_to_str(keywords) if keywords else None
+        Worker.gsheet.update_cell(row_id=f"H{row_id}", content=keywords)
+
+        if auto_mode == "FALSE":
+            Worker.gsheet.update_status("Завершено", row_id)
+        else:
+            Worker.gsheet.update_status("Сгенерировать описание", row_id)
 
     @staticmethod
     @celery.task(rate_limit=f"{settings.RPM_LIMIT}/m", soft_time_limit=60, time_limit=120)
-    def chatgpt_task(data: list, row_id: int) -> None:
+    def chatgpt_task(prompt: str, row_id: int) -> None:
         try:
-            prompt = TextUtils.row_to_ai_prompt(data)
             result = Worker.chatgpt.send_request(prompt)  # отправляем запрос в ChatGPT
 
             # Записываем результат в таблицу
-            Worker.gsheet.update_status(row_id, "Завершено")
-            Worker.gsheet.update_cell(f"G{row_id}", result)
+            Worker.gsheet.update_status("Завершено", row_id)
+            Worker.gsheet.update_cell(result, f"J{row_id}")
         except Exception as e:
             sentry_sdk.capture_exception(e)

@@ -40,7 +40,7 @@ class GSheet:
             discovery.build("sheets", "v4", http=credentials.authorize(httplib2.Http())).spreadsheets().values()  # noqa
         )
 
-    def read_sheet(self) -> List[str]:
+    def read_sheet(self) -> List[List]:
         """
         Чтение таблицы
         :return:
@@ -52,25 +52,25 @@ class GSheet:
         ).execute()
         return values["values"]
 
-    def update_cell(self, cell_id: str, content: str) -> None:
+    def update_cell(self, content: str, row_id: str) -> None:
         """
         Обновление информации в таблице
-        :param cell_id: ID клетки
+        :param row_id: ID клетки
         :param content: Информация, которую нужно вставить
         :return:
         """
         self.service.update(
             spreadsheetId=self.gsheet_id,
-            range=f"{self.sheet_name}!{cell_id}",
+            range=f"{self.sheet_name}!{row_id}",
             valueInputOption="USER_ENTERED",
             body={"majorDimension": "ROWS", "values": [[content]]},
         ).execute()
 
-    def update_status(self, row_id, new_status: str) -> None:
+    def update_status(self, new_status: str, row_id: int) -> None:
         """
         Обновление статуса в таблице
         :param new_status: Новый статус
         :param row_id: Номер строки
         :return:
         """
-        self.update_cell(f"A{row_id}", new_status)
+        self.update_cell(new_status, f"A{row_id}")

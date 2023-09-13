@@ -19,7 +19,7 @@ from app.config import ProdSettings  # noqa
 
 
 class Parser:
-    def __init__(self, keywords_count: int = 30):
+    def __init__(self, keywords_count: int = 30, headless: bool = True):
         self._settings = ProdSettings()
         self._cookies_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "cookies")
         self._keywords_count = keywords_count
@@ -29,7 +29,7 @@ class Parser:
         chrome_service = webdriver.ChromeService(executable_path=chromedriver)
         options = webdriver.ChromeOptions()
         options.add_argument(f"user-agent={UserAgent().googlechrome}")
-        options.add_argument("--headless")
+        options.add_argument("--headless") if headless else None
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
 
@@ -144,10 +144,14 @@ class Parser:
             sentry_sdk.capture_exception(ex)
             return None
 
+    def get_wb_item_name(self, sku: str | int) -> str:
+        self._driver.get(f"https://www.wildberries.ru/catalog/{sku}/detail.aspx")
+        product_name = WebDriverWait(self._driver, 10).until(
+            ec.visibility_of_element_located((By.CSS_SELECTOR, 'h1[data-link="text{:selectedNomenclature^goodsName}"]'))
+        )
+        return str(product_name.text)
+
     def get_wb_item_params(self, sku: str | int) -> Dict[str, str]:
-        """
-        WIP
-        """
         self._driver.get(f"https://www.wildberries.ru/catalog/{sku}/detail.aspx")
 
         button = WebDriverWait(self._driver, 10).until(
@@ -163,12 +167,15 @@ class Parser:
             i.text for i in product_params_info if i.text not in product_params_decor and i.text != ""
         ]
         result = {decor: info for decor, info in zip(product_params_decor, product_params_info)}
-        # json.dump(result, open("result.json", "w"), ensure_ascii=False, indent=1)
         return result
 
-    def get_wb_item_name(self, sku: str | int) -> str:
+    def get_wb_item_desc(self, sku: str | int):
         self._driver.get(f"https://www.wildberries.ru/catalog/{sku}/detail.aspx")
-        product_name = WebDriverWait(self._driver, 10).until(
-            ec.visibility_of_element_located((By.CSS_SELECTOR, 'h1[data-link="text{:selectedNomenclature^goodsName}"]'))
+
+        button = WebDriverWait(self._driver, 10).until(
+            ec.visibility_of_element_located((By.XPATH, "// button[text() = 'Развернуть описание']"))
         )
-        return str(product_name.text)
+        self._driver.execute_script("arguments[0].scrollIntoView();", button)
+        button.click()
+
+        return self._driver.find_element(By.CLASS_NAME, "collapsable__text").text
