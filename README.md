@@ -74,13 +74,13 @@ chmod +x main.py
 #### 2. Запуск Celery
 Запускается два воркера  
 
-**Воркер для работы с ChatGPT**
+**Воркер для работы с Mpstats**
 ```bash
 cd app
 celery -A tasks worker  --loglevel=INFO --pool=prefork --concurrency=1 --queues=mpstats -n "mpstats@fedora"
 ```
 
-**Воркер для работы с Mpstats**
+**Воркер для работы с Chatgpt**
 ```bash
 cd app
 celery -A tasks worker  --loglevel=INFO --pool=prefork --concurrency=4 --queues=chatgpt -n "chatgpt@fedora"
