@@ -71,7 +71,7 @@ class Worker:
         keywords = Worker.text_utils.transform_dict_keys_to_str(keywords) if keywords else None
         Worker.gsheet.update_cell(row_id=f"H{row_id}", content=keywords)
 
-        if auto_mode == "FALSE":
+        if auto_mode == "Ручной":
             Worker.gsheet.update_status("Завершено", row_id)
         else:
             Worker.gsheet.update_status("Сгенерировать описание", row_id)
