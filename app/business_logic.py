@@ -1,6 +1,6 @@
+import re
 import asyncio
 from datetime import datetime
-import re
 
 import sentry_sdk
 from celery import chain
