@@ -33,12 +33,13 @@ class TaskService:
                     task_status: str = sheet_data[i][0]
                     work_mode: str = sheet_data[i][1]
                     auto_mode: str = sheet_data[i][2]
-                    wb_sku = int(re.search(r"\d+", sheet_data[i][3]).group())  # Достаем sku из ссылки
 
                     if task_status == "Собрать ключи":
                         """
                         Сборка данных
                         """
+                        wb_sku = int(re.search(r"\d+", sheet_data[i][3]).group())  # Достаем sku из ссылки
+
                         if work_mode == "Со сборкой ключей V1.0":
                             print(f"{datetime.now().replace(microsecond=0)}: Sent task from row {row_id} to queue")
                             self.gsheet.update_status("В работе", row_id)
