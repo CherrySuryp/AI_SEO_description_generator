@@ -1,3 +1,4 @@
+import json
 import re
 import asyncio
 from datetime import datetime
@@ -28,13 +29,14 @@ class TaskService:
             try:
                 sheet_data = self.gsheet.read_sheet()  # чтение таблицы
 
+                qwe = []
                 for i in range(len(sheet_data)):
+                    qwe.append(sheet_data[i])
                     row_id = i + 2
                     task_status: str = sheet_data[i][0]
                     work_mode: str = sheet_data[i][1]
                     auto_mode: str = sheet_data[i][2]
                     wb_sku = int(re.search(r"\d+", sheet_data[i][3]).group())  # Достаем sku из ссылки
-                    prompt = self.utils.row_to_ai_prompt(sheet_data[i])
 
                     if task_status == "Собрать ключи":
                         """
@@ -65,10 +67,11 @@ class TaskService:
                         """
                         Генерация описания
                         """
+                        prompt = self.utils.row_to_ai_prompt(sheet_data[i])
                         print(f"{datetime.now().replace(microsecond=0)}: Sent task from row {row_id} to queue")
                         self.gsheet.update_status("В работе", row_id)
                         self.send_task.chatgpt_task.apply_async((prompt, row_id), queue="chatgpt")
-
+                json.dump(qwe, open("qwe.json", "w"), ensure_ascii=False, indent=2)
                 await asyncio.sleep(self.settings.REFRESH_INTERVAL)  # интервал между опросами таблицы
 
             except Exception as ex:
