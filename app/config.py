@@ -28,7 +28,7 @@ class ProdSettings(BaseSettings):
 settings = ProdSettings()
 
 if ProdSettings().MODE == "PROD":
-    redis_path = "redis://redis:6379/0"
+    redis_path = "redis://:qwerty@redis:6379/0"
 
 else:
     redis_path = "redis://127.0.0.1:6379/0"
