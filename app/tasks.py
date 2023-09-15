@@ -33,7 +33,7 @@ class Worker:
     settings = ProdSettings()
 
     @staticmethod
-    @celery.task(soft_time_limit=60, time_limit=120)
+    @celery.task(soft_time_limit=120, time_limit=180)
     def parse_wb_item_name(wb_sku: int, row_id: int):
         try:
             item_name = Parser().get_wb_item_name(wb_sku)
@@ -42,7 +42,7 @@ class Worker:
             sentry_sdk.capture_exception(e)
 
     @staticmethod
-    @celery.task(soft_time_limit=60, time_limit=120)
+    @celery.task(soft_time_limit=120, time_limit=180)
     def parse_wb_item_params(wb_sku: int, row_id: int):
         try:
             item_params = Parser().get_wb_item_params(wb_sku)
@@ -51,7 +51,7 @@ class Worker:
             sentry_sdk.capture_exception(e)
 
     @staticmethod
-    @celery.task(soft_time_limit=60, time_limit=120)
+    @celery.task(soft_time_limit=120, time_limit=180)
     def parse_wb_item_desc(wb_sku: int, row_id: int):
         try:
             item_desc = Parser().get_wb_item_desc(wb_sku)
@@ -60,7 +60,7 @@ class Worker:
             sentry_sdk.capture_exception(e)
 
     @staticmethod
-    @celery.task(soft_time_limit=60, time_limit=120)
+    @celery.task(soft_time_limit=120, time_limit=180)
     def parse_mpstats_keywords(auto_mode: str, wb_sku: int, row_id: int):
         keywords = None
         try:
