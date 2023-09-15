@@ -77,7 +77,7 @@ class Worker:
             Worker.gsheet.update_status("Сгенерировать описание", row_id)
 
     @staticmethod
-    @celery.task(rate_limit=f"{settings.RPM_LIMIT}/m", soft_time_limit=60, time_limit=120)
+    @celery.task(rate_limit=f"{settings.RPM_LIMIT}/m", soft_time_limit=120, time_limit=180)
     def chatgpt_task(prompt: str, row_id: int) -> None:
         try:
             result = Worker.chatgpt.send_request(prompt)  # отправляем запрос в ChatGPT
