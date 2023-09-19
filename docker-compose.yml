@@ -32,7 +32,7 @@ services:
       - celery_chatgpt
       - redis
     volumes:
-      - cookies:/app/selenium_parse/cookies
+      - app:/app
 
 volumes:
-  cookies:
+  app:
