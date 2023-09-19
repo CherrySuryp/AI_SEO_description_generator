@@ -25,7 +25,9 @@ services:
       - redis
 
   main_app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: main_app
     depends_on:
       - celery_mpstats
