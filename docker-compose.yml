@@ -34,4 +34,4 @@ services:
       - celery_chatgpt
       - redis
     volumes:
-      - ./:./
+      - ./:/app
