@@ -2,10 +2,7 @@ version: "3.8"
 services:
   redis:
     image: redis:latest
-    container_name: redis
-    command: redis-server --requirepass qwerty
-    ports:
-      - "6379:6379"
+    container_name: redis_ai_seo
 
   celery_chatgpt:
     container_name: celery_chatgpt
