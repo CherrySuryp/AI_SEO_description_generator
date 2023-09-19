@@ -31,3 +31,8 @@ services:
       - celery_mpstats
       - celery_chatgpt
       - redis
+    volumes:
+      - cookies:/app/selenium_parse/cookies
+
+volumes:
+  cookies:
