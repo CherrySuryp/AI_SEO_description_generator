@@ -38,7 +38,7 @@ class TaskService:
                         """
                         Сборка данных
                         """
-                        if work_mode == "По названию товара":
+                        if work_mode == "По названию товара" and sheet_data[i][4]:
                             item_name = sheet_data[i][4]
                             print(f"{datetime.now().replace(microsecond=0)}: Sent task from row {row_id} to queue")
                             self.gsheet.update_status("В работе", row_id)
@@ -47,7 +47,7 @@ class TaskService:
                                 .apply_async((auto_mode, item_name, row_id), queue="mpstats")
                             )
 
-                        elif work_mode == "Со сборкой ключей V1.0":
+                        elif work_mode == "Со сборкой ключей V1.0" and sheet_data[i][3]:
                             wb_sku = int(re.search(r"\d+", sheet_data[i][3]).group()) if sheet_data[i][3] else None
                             print(f"{datetime.now().replace(microsecond=0)}: Sent task from row {row_id} to queue")
                             self.gsheet.update_status("В работе", row_id)
@@ -59,7 +59,7 @@ class TaskService:
                             )
                             queue.apply_async(queue="mpstats")
 
-                        elif work_mode == "Со сборкой ключей V1.2":
+                        elif work_mode == "Со сборкой ключей V1.2" and sheet_data[i][3]:
                             wb_sku = int(re.search(r"\d+", sheet_data[i][3]).group()) if sheet_data[i][3] else None
                             print(f"{datetime.now().replace(microsecond=0)}: Sent task from row {row_id} to queue")
                             self.gsheet.update_status("В работе", row_id)
