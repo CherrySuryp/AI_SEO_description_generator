@@ -38,14 +38,24 @@ class TaskService:
                         """
                         Сборка данных
                         """
-                        if work_mode == "Со сборкой ключей V1.0":
+                        if work_mode == "По названию товара":
+                            item_name = sheet_data[i][4]
+                            print(f"{datetime.now().replace(microsecond=0)}: Sent task from row {row_id} to queue")
+                            self.gsheet.update_status("В работе", row_id)
+                            (
+                                self.send_task.parse_mpstats_keywords_by_item_name
+                                .apply_async((auto_mode, item_name, row_id), queue="mpstats")
+                            )
+
+                        elif work_mode == "Со сборкой ключей V1.0":
                             wb_sku = int(re.search(r"\d+", sheet_data[i][3]).group()) if sheet_data[i][3] else None
                             print(f"{datetime.now().replace(microsecond=0)}: Sent task from row {row_id} to queue")
                             self.gsheet.update_status("В работе", row_id)
                             queue = chain(
                                 self.send_task.parse_wb_item_name.si(wb_sku, row_id)  # Название товара
                                 | self.send_task.parse_wb_item_params.si(wb_sku, row_id)  # Характеристики товара
-                                | self.send_task.parse_mpstats_keywords.si(auto_mode, wb_sku, row_id)  # Ключевые слова
+                                # Ключевые слова
+                                | self.send_task.parse_mpstats_keywords_by_sku.si(auto_mode, wb_sku, row_id)
                             )
                             queue.apply_async(queue="mpstats")
 
@@ -57,7 +67,8 @@ class TaskService:
                                 self.send_task.parse_wb_item_name.si(wb_sku, row_id)  # Название товара
                                 | self.send_task.parse_wb_item_params.si(wb_sku, row_id)  # Характеристики товара
                                 | self.send_task.parse_wb_item_desc.si(wb_sku, row_id)  # Описание товара
-                                | self.send_task.parse_mpstats_keywords.si(auto_mode, wb_sku, row_id)  # Ключевые слова
+                                # Ключевые слова
+                                | self.send_task.parse_mpstats_keywords_by_sku.si(auto_mode, wb_sku, row_id)
                             )
                             queue.apply_async(queue="mpstats")
 
