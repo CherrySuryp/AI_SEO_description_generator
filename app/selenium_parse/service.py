@@ -1,6 +1,7 @@
 import sys
 import os
 import pickle
+import time
 
 from typing import Dict
 
@@ -87,13 +88,24 @@ class Parser:
             print("Getting cookies")
             self._authorize(save_cookies=True)
 
-    def _top_similar_item(self, wb_sku: int) -> int:
+    def _top_similar_item_by_sku(self, wb_sku: int) -> int:
         """
         Переход к ТОП-1 похожему товару
         """
         self._driver.get(f"https://mpstats.io/wb/item/{wb_sku}")
         elements = self._driver.find_elements(
             By.XPATH, "//a[@href and @title='Открыть в Wildberries' and " "@target='_blank']"
+        )
+        return int([i.text for i in elements][0])
+
+    def _top_similar_item_by_item_name(self, item_name: str) -> int:
+        self._driver.get(f"https://mpstats.io/wb/bysearch?query={item_name}")
+        elements = WebDriverWait(self._driver, 10).until(
+            ec.visibility_of_any_elements_located(
+                (
+                    By.XPATH, "//a[@href and @title='Открыть в Wildberries' and " "@target='_blank']",
+                )
+            )
         )
         return int([i.text for i in elements][0])
 
@@ -128,13 +140,26 @@ class Parser:
         # json.dump(kw_json, open("keywords.json", "w", encoding="utf8"), ensure_ascii=False, indent=1)
         return kw_json
 
-    def parse_mpstats(self, wb_sku: int) -> Dict[str, int] | None:
+    def parse_mpstats_by_sku(self, wb_sku: int) -> Dict[str, int] | None:
         """
         Вызов бизнес логики
         """
         try:
             self._auth_pipeline()
-            top_item_sku = self._top_similar_item(wb_sku=wb_sku)
+            top_item_sku = self._top_similar_item_by_sku(wb_sku=wb_sku)
+            result = self._get_keywords(top_item_sku)
+            self._driver.quit()
+            return result
+
+        except Exception as ex:
+            self._driver.quit()
+            sentry_sdk.capture_exception(ex)
+            return None
+
+    def parse_mpstats_by_name(self, item_name: str) -> Dict[str, int] | None:
+        try:
+            self._auth_pipeline()
+            top_item_sku = self._top_similar_item_by_item_name(item_name)
             result = self._get_keywords(top_item_sku)
             self._driver.quit()
             return result

@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   redis:
-    image: redis:latest
+    image: redis:7
     container_name: redis_ai_seo
 
   celery_chatgpt:
@@ -33,5 +33,3 @@ services:
       - celery_mpstats
       - celery_chatgpt
       - redis
-    volumes:
-      - ./app:/app
