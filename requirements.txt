@@ -19,7 +19,7 @@ click-didyoumean==0.3.0
 click-plugins==1.1.1
 click-repl==0.3.0
 crashtest==0.4.1
-cryptography==41.0.3
+cryptography==41.0.4
 distlib==0.3.7
 dulwich==0.21.5
 exceptiongroup==1.1.3
