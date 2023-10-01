@@ -46,6 +46,7 @@ class Worker:
     def parse_wb_item_params(wb_sku: int, row_id: int):
         try:
             item_params = Parser().get_wb_item_params(wb_sku)
+            item_params = TextUtils().exclude_dim_info(item_params)
             Worker.gsheet.update_cell(content=str(item_params), row_id=f"F{row_id}")
         except Exception as e:
             sentry_sdk.capture_exception(e)
