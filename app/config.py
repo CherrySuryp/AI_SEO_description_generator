@@ -16,6 +16,8 @@ class ProdSettings(BaseSettings):
     MPSTATS_LOGIN: str
     MPSTATS_PASS: str
 
+    WB_TOKEN: str
+
     OPENAI_KEY: str
     RPM_LIMIT: int
     GPT_MODEL: str
