@@ -95,11 +95,10 @@ class Worker:
             Worker.gsheet.update_status("Завершено", row_id)
 
     @staticmethod
-    @celery.task(rate_limit=f"{settings.RPM_LIMIT}/m", soft_time_limit=120, time_limit=180)
+    @celery.task(rate_limit=f"{settings.RPM_LIMIT}/m", soft_time_limit=180, time_limit=240)
     def chatgpt_task(prompt: str, row_id: int) -> None:
         try:
             result = Worker.chatgpt.send_request(prompt)  # отправляем запрос в ChatGPT
-
             # Записываем результат в таблицу
             Worker.gsheet.update_status("Завершено", row_id)
             Worker.gsheet.update_cell(result, f"J{row_id}")
