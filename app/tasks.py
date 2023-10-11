@@ -99,6 +99,7 @@ class Worker:
     def chatgpt_task(prompt: str, row_id: int) -> None:
         try:
             result = Worker.chatgpt.send_request(prompt)  # отправляем запрос в ChatGPT
+            print("Updated row")
 
             # Записываем результат в таблицу
             Worker.gsheet.update_status("Завершено", row_id)
